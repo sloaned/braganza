@@ -193,16 +193,22 @@ function findReachableAreas(region, moves){
 			{
 				if(region.landTravel[i].color === "" || (region.landTravel[i].color === region.color && (region.captain === 1 || region.landTravel[i].soldiers < 8)))
 				{
-					neighbors.push(region.landTravel[i]);
 					areas.push(region.landTravel[i]);
+				}
+				if(region.landTravel[i].color === "")
+				{
+					neighbors.push(region.landTravel[i]);
 				}
 			}
 			for(var i = 0; i < region.seaTravel.length; i++)
 			{
 				if(region.seaTravel[i].color === "" || (region.seaTravel[i].color === region.color && (region.captain === 1 || region.seaTravel[i].soldiers < 8)))
 				{
-					neighbors.push(region.seaTravel[i]);
 					areas.push(region.seaTravel[i]);
+				}
+				if(region.seaTravel[i].color === "")
+				{
+					neighbors.push(region.seaTravel[i]);
 				}
 			}
 			
@@ -254,16 +260,22 @@ function findReachableAreas(region, moves){
 			{
 				if(region.landTravel[i].color === "" || (region.landTravel[i].color === region.color && (region.captain === 1 || region.landTravel[i].soldiers < 8)))
 				{
-					neighbors.push(region.landTravel[i]);
 					areas.push(region.landTravel[i]);
+				}
+				if(region.landTravel[i].color === "")
+				{
+					neighbors.push(region.landTravel[i]);
 				}
 			}
 			for(var i = 0; i < region.seaTravel.length; i++)
 			{
 				if((region.seaTravel[i].color === region.color && (region.captain === 1 || region.seaTravel[i].soldiers < 8)))
 				{
-					neighbors.push(region.seaTravel[i]);
 					areas.push(region.seaTravel[i]);
+				}
+				if(region.seaTravel[i].color === region.color)
+				{
+					neighbors.push(region.seaTravel[i]);
 				}
 			}
 			
