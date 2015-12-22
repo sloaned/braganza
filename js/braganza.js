@@ -195,7 +195,7 @@ function findReachableAreas(region, moves){
 				{
 					areas.push(region.landTravel[i]);
 				}
-				if(region.landTravel[i].color === "")
+				if(region.landTravel[i].color === "" || region.landTravel[i].color === region.color)
 				{
 					neighbors.push(region.landTravel[i]);
 				}
@@ -206,7 +206,7 @@ function findReachableAreas(region, moves){
 				{
 					areas.push(region.seaTravel[i]);
 				}
-				if(region.seaTravel[i].color === "")
+				if(region.seaTravel[i].color === "" || region.seaTravel[i].color === region.color)
 				{
 					neighbors.push(region.seaTravel[i]);
 				}
@@ -262,7 +262,7 @@ function findReachableAreas(region, moves){
 				{
 					areas.push(region.landTravel[i]);
 				}
-				if(region.landTravel[i].color === "")
+				if(region.landTravel[i].color === "" || region.landTravel[i].color === region.color)
 				{
 					neighbors.push(region.landTravel[i]);
 				}
@@ -273,7 +273,7 @@ function findReachableAreas(region, moves){
 				{
 					areas.push(region.seaTravel[i]);
 				}
-				if(region.seaTravel[i].color === region.color)
+				if(region.seaTravel[i].color === region.color || region.seaTravel[i].color === region.color)
 				{
 					neighbors.push(region.seaTravel[i]);
 				}
