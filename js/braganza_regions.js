@@ -504,7 +504,7 @@ water17.seaTravel = [water18, water21];
 
 water18.name = "water18";
 water18.attack = [water16, water17, water19, water21, water22, water23, landsend, thatcherisland];
-water18.landTravel = [landsend, thatcherisland];
+water18.landTravel = [landsend];
 water18.seaTravel = [water16, water17, water19, water21, water22, water23];
 
 water19.name = "water19";
