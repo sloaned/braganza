@@ -33,13 +33,13 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('.army').click(function(e){
+	/*$('.army').click(function(e){
 		e.preventDefault();
 		var armyId = $(this).attr('id').toString();
 		var region = armyId.substr(5);
 		console.log("region = ");
 		console.log(region);
-	});
+	});*/
 	
 	randomlyPopulateBoard();
 	showArmies();
@@ -47,7 +47,7 @@ $(document).ready(function(){
 });
 
 function randomlyPopulateBoard(){
-	var armyNumber = Math.ceil(Math.random()*5) + 1;
+	var armyNumber = Math.ceil(Math.random()*2) + 1;
 	var armies = [];
 	var values = [];
 	for(var i = 0; i < 78; i++)
@@ -72,7 +72,7 @@ function randomlyPopulateBoard(){
 		for(var j = 0; j < armies[i].territories.length; j++)
 		{
 			armies[i].territories[j].color = armies[i].color;
-			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 7) + 1;
+			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 4) + 4;
 			var artillery = Math.ceil(Math.random() * 7);
 			if(artillery < 5)
 			{
@@ -224,12 +224,14 @@ function findReachableAreas(region, moves){
 		
 			var neighbor = neighbors[i];
 			
-			if(neighbor.type === "sea"){
+			if(neighbor.type === "sea" && (neighbor.soldiers < 8 || region.captain === true)){
 				for(var j = 0; j < neighbor.landTravel.length; j++){
 					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1){
 						areas.push(neighbor.landTravel[j]);
 					}
 				}
+			}
+			if(neighbor.type === "sea"){
 				for(var j = 0; j < neighbor.seaTravel.length; j++){
 					if((neighbor.seaTravel[j].color === "" || (neighbor.seaTravel[j].color === region.color && (region.captain === true || neighbor.seaTravel[j].soldiers < 8))) && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
 						areas.push(neighbor.seaTravel[j]);
