@@ -194,7 +194,7 @@ for(var i = 0; i < regions.length; i++)
 {
 	regions[i].soldiers = 0;
 	regions[i].cannons = 0;
-	regions[i].captain = 0;
+	regions[i].captain = false;
 	regions[i].color = "";
 }
 

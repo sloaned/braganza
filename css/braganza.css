@@ -47,20 +47,19 @@ html
 }
 
 .cannon{
-	width: 45px;
+	width: 40px;
 	height: auto;
 }
 
 .soldier{
-	height: 25px; 
+	height: 24px; 
 	width: auto;
 }
 
 .captain{
-	height: 45px;
+	height: 40px;
 	width: auto;
 }
-
 
 
 .army{
@@ -68,392 +67,392 @@ html
 	z-index: 1;
 }
 
-.conomopoint{
+#army-conomopoint{
 	left: 1%;
 	top: 24.5%;
 }
 
-.northwestterritory{
+#army-northwestterritory{
 	left: 13%;
 	top: 27.5%;
 }
 
-.twopennyloaf{
+#army-twopennyloaf{
 	left: 21%;
 	top: 17.5%;
 }
 
-.wingaersheek{
+#army-wingaersheek{
 	left: 28.8%;
 	top: 25.5%;
 }
 
-.redrocks{
+#army-redrocks{
 	left: 1.5%;
 	top: 44.5%;
 }
 
-.westparrish{
+#army-westparrish{
 	left: 11.5%;
 	top: 39.5%;
 }
 
-.rustisland{
+#army-rustisland{
 	left: 20.5%;
 	top: 39.5%;
 }
 
-.mountann{
+#army-mountann{
 	left: 2%;
 	top: 58.5%;
 }
 
-.fernwood{
+#army-fernwood{
 	left: 21%;
-	top: 53%;
+	top: 54%;
 }
 
-.coolidgepoint{
+#army-coolidgepoint{
 	left: 1.5%;
 	top: 72.5%;
 }
 
-.ravenswood{
+#army-ravenswood{
 	left: 13%;
 	top: 64%;
 }
 
-.stagefortpark{
+#army-stagefortpark{
 	left: 27%;
 	top: 62%;
 }
 
-.magnolia{
+#army-magnolia{
 	left: 10%;
 	top: 77.5%;
 }
 
-.hammondcastle{
+#army-hammondcastle{
 	left: 21%;
 	top: 71%;
 }
 
-.annisquam{
+#army-annisquam{
 	left: 48%;
 	top: 21%;
 }
 
-.bayview{
+#army-bayview{
 	left: 54.5%;
 	top: 15.5%;
 }
 
-.lanesville{
+#army-lanesville{
 	left: 61%;
 	top: 11%;
 }
 
-.halibutpoint{
+#army-halibutpoint{
 	left: 70%;
 	top: 7.7%;
 }
 
-.pigeonhill{
+#army-pigeonhill{
 	left: 70.5%;
 	top: 20%;
 }
 
-.dogtown{
+#army-dogtown{
 	left: 58%;
 	top: 27%;
 }
 
-.riverdale{
+#army-riverdale{
 	left: 43.3%;
 	top: 40%;
 }
 
-.wheelerspoint{
+#army-wheelerspoint{
 	left: 36%;
 	top: 44%;
 }
 
-.blackburnpark{
+#army-blackburnpark{
 	left: 50%;
 	top: 46%;
 }
 
-.raccoonrock{
+#army-raccoonrock{
 	left: 59%;
 	top: 40%;
 }
 
-.pooleshill{
+#army-pooleshill{
 	left: 66.5%;
 	top: 34.5%;
 }
 
-.bearskinneck{
+#army-bearskinneck{
 	left: 73%;
 	top: 34.5%;
 }
 
-.gaphead{
+#army-gaphead{
 	left: 80%;
 	top: 37.5%;
 }
 
-.landsend{
+#army-landsend{
 	left: 79.5%;
 	top: 48%;
 }
 
-.thatcherisland{
+#army-thatcherisland{
 	left: 92%;
 	top: 58.5%;
 }
 
-.capepond{
+#army-capepond{
 	left: 64%;
 	top: 46.5%;
 }
 
-.longbeach{
+#army-longbeach{
 	left: 70%;
 	top: 51.5%;
 }
 
-.goodharborbeach{
+#army-goodharborbeach{
 	left: 59%;
 	top: 58%;
 }
 
-.portageehill{
+#army-portageehill{
 	left: 48.5%;
-	top: 53%;
+	top: 53.7%;
 }
 
-.cityhall{
+#army-cityhall{
 	left: 41%;
 	top: 54%;
 }
 
-.thefort{
+#army-thefort{
 	left: 37.5%;
 	top: 57.5%;
 }
 
-.statefishpier{
+#army-statefishpier{
 	left: 50%;
 	top: 62.5%;
 }
 
-.bassrocks{
+#army-bassrocks{
 	left: 55%;
 	top: 69.5%;
 }
 
-.rockyneck{
+#army-rockyneck{
 	left: 49%;
 	top: 72%;
 }
 
-.easternpoint{
+#army-easternpoint{
 	left: 41%;
 	top: 84%;
 }
 
-.water1{
+#army-water1{
 	left: 6%;
 	top: 12%;
 }
 
-.water2{
-	left: 12%;
+#army-water2{
+	left: 13%;
 	top: 1%;
 }
 
-.water3{
+#army-water3{
 	left: 21%;
 	top: 2%;
 }
 
-.water4{
+#army-water4{
 	left: 29.5%;
 	top: 4.5%;
 }
 
-.water5{
+#army-water5{
 	left: 30%;
 	top: 13%;
 }
 
-.water6{
+#army-water6{
 	left: 46%;
 	top: 6%;
 }
 
-.water7{
+#army-water7{
 	left: 40%;
 	top: 15%;
 }
 
-.water8{
+#army-water8{
 	left: 60%;
 	top: 0.5%;
 }
 
-.water9{
+#army-water9{
 	left: 78%;
 	top: 0.2%;
 }
 
-.water10{
+#army-water10{
 	left: 84%;
 	top: 1.5%;
 }
 
-.water11{
+#army-water11{
 	left: 92%;
 	top: 12%;
 }
 
-.water12{
+#army-water12{
 	left: 83.5%;
 	top: 12%;
 }
 
-.water13{
+#army-water13{
 	left: 77.5%;
 	top: 17%;
 }
 
-.water14{
+#army-water14{
 	left: 83%;
 	top: 27%;
 }
 
-.water15{
+#army-water15{
 	left: 93.5%;
 	top: 32%;
 }
 
-.water16{
+#army-water16{
 	left: 93.5%;
 	top: 48.5%;
 }
 
-.water17{
+#army-water17{
 	left: 72.5%;
 	top: 59.5%;
 }
 
-.water18{
+#army-water18{
 	left: 82%;
 	top: 61.5%;
 }
 
-.water19{
+#army-water19{
 	left: 88.5%;
 	top: 69%;
 }
 
-.water20{
+#army-water20{
 	left: 92.5%;
 	top: 73.5%;
 }
 
-.water21{
+#army-water21{
 	left: 64%;
 	top: 66.5%;
 }
 
-.water22{
+#army-water22{
 	left: 68%;
 	top: 78%;
 }
 
-.water23{
+#army-water23{
 	left: 78.5%;
 	top: 76%;
 }
 
-.water24{
-	left: 76.5%;
-	top: 88%;
+#army-water24{
+	left: 77%;
+	top: 89%;
 }
 
-.water25{
+#army-water25{
 	left: 86%;
 	top: 87%;
 }
 
-.water26{
+#army-water26{
 	left: 59.5%;
 	top: 75%;
 }
 
-.water27{
+#army-water27{
 	left: 48%;
 	top: 85.5%;
 }
 
-.water28{
+#army-water28{
 	left: 59%;
 	top: 91.5%;
 }
 
-.water29{
+#army-water29{
 	left: 10%;
 	top: 89%;
 }
 
-.water30{
+#army-water30{
 	left: 17%;
 	top: 87%;
 }
 
-.water31{
+#army-water31{
 	left: 25%;
 	top: 85.3%;
 }
 
-.water32{
+#army-water32{
 	left: 29%;
 	top: 79%;
 }
 
-.water33{
+#army-water33{
 	left: 34%;
 	top: 68%;
 }
 
-.water34{
+#army-water34{
 	left: 31.5%;
 	top: 56.5%;
 }
 
-.water35{
+#army-water35{
 	left: 31%;
 	top: 38%;
 }
 
-.water36{
+#army-water36{
 	left: 1%;
 	top: 1%;
 }
 
-.water37{
+#army-water37{
 	left: 92.5%;
 	top: 1.5%;
 }
 
-.water38{
+#army-water38{
 	left: 1.5%;
 	top: 90.5%;
 }
 
-.water39{
+#army-water39{
 	left: 94%;
 	top: 89%;
 }
