@@ -1,9 +1,8 @@
 var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
 var diceAudio = new Audio('audio/dice-throw-on-gameboard.mp3');
 var highlighted = false;
-var highlightedRegion;
+var highlightedRegion = "";
 var reachable = [];
-var attackable = [];
 
 $(document).ready(function(){
 	
@@ -24,12 +23,17 @@ $(document).ready(function(){
 	$("#mapArea").append(redDice);
 	$("#mapArea").append(whiteDice);
 	
+	
 	$('.mapRegion').click(function(e){
 		e.preventDefault();
 		var region = $(this).attr('id');
-		if(region.color !== "")
+		if(highlighted && region === highlightedRegion)
 		{
-			highlightReachableAreas(region);
+			clearHighlight();
+		}
+		else if(!highlighted && region.color !== "")
+		{
+			highlightAreas(region, "attack");
 		}
 	});
 	
@@ -40,14 +44,32 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	
+	placeSerpent();
 	randomlyPopulateBoard();
 	showArmies();
 
 });
 
+function clearHighlight(){ 
+	for(var i = 0; i < reachable.length; i++)
+	{
+		var data = $("#" + reachable[i].name).mouseout().data('maphilight') || {};
+		data.alwaysOn = !data.alwaysOn;
+		$("#" + reachable[i].name).data('maphilight', data).trigger('alwaysOn.maphilight');
+	}
+	var data = $("#" + highlightedRegion).mouseout().data('maphilight') || {};
+	data.alwaysOn = !data.alwaysOn;
+	data.strokeWidth = 1;
+	data.fillOpacity = 0.4;
+	$("#" + highlightedRegion).data('maphilight', data).trigger('alwaysOn.maphilight');
+	
+	highlightedRegion = "";
+	highlighted = false;
+	reachable = [];
+};
+
 function randomlyPopulateBoard(){
-	var armyNumber = Math.ceil(Math.random()*2) + 1;
+	var armyNumber = Math.ceil(Math.random()*5)+1;
 	var armies = [];
 	var values = [];
 	for(var i = 0; i < 78; i++)
@@ -65,14 +87,19 @@ function randomlyPopulateBoard(){
 		for(var j = 0; j < landEach; j++)
 		{
 			var num = values[Math.floor(Math.random() * values.length)];
-			armies[i].territories.push(regions[num]);
-			var index = values.indexOf(num);
-			values.splice(index, 1);
+			if(regions[num].color != "serpent"){
+				armies[i].territories.push(regions[num]);
+				var index = values.indexOf(num);
+				values.splice(index, 1);
+			}
+			else{
+				j--;
+			}
 		}
 		for(var j = 0; j < armies[i].territories.length; j++)
 		{
 			armies[i].territories[j].color = armies[i].color;
-			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 4) + 4;
+			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 7) + 1;
 			var artillery = Math.ceil(Math.random() * 7);
 			if(artillery < 5)
 			{
@@ -93,85 +120,21 @@ function randomlyPopulateBoard(){
 	
 };
 
-function highlightAttackableAreas(region){
-	if(highlighted && region === highlightedRegion.name){
-		for(var i = 0; i < regions.length; i++){
-			if(regions[i].name === region){
-				for(var j = 0; j < attackable.length; j++){
-					var data = $("#" + attackable[j].name).mouseout().data('maphilight') || {};
-					data.alwaysOn = !data.alwaysOn;
-					$("#" + attackable[j].name).data('maphilight', data).trigger('alwaysOn.maphilight');
-				}
-			}
-		}
-		var data = $("#" + region).mouseout().data('maphilight') || {};
-		data.alwaysOn = !data.alwaysOn;
-		data.strokeWidth = 1;
-		data.fillOpacity = 0.4;
-		$("#" + region).data('maphilight', data).trigger('alwaysOn.maphilight');
-		highlighted = false;
-		attackable = [];
-	}
-	else if(!highlighted)
-	{	
-		for(var i = 0; i < regions.length; i++)
-		{
-			if(regions[i].name === region && regions[i].color != ""){
-				highlighted = true;
-				highlightedRegion = regions[i];
-				attackable = findAttackableAreas(regions[i]);
-				for(var j = 0; j < attackable.length; j++)
-				{
-					var data = $("#" + attackable[j].name).mouseout().data('maphilight') || {};
-					data.alwaysOn = !data.alwaysOn;
-					$("#" + attackable[j].name).data('maphilight', data).trigger('alwaysOn.maphilight');
-				}
-				break;
-			}
-		}
-		if(highlighted)
-		{
-			var data = $("#" + region).mouseout().data('maphilight') || {};
-			data.alwaysOn = !data.alwaysOn;
-			data.strokeWidth = 6;
-			data.fillOpacity = 0.6;
-			$("#" + region).data('maphilight', data).trigger('alwaysOn.maphilight');
-		}		
-	}
-}
-
-function highlightReachableAreas(region)
+function highlightAreas(region, action)
 {
-		if(highlighted && region === highlightedRegion.name)
-		{
-			for(var i = 0; i < regions.length; i++)
-			{
-				if(regions[i].name === region){
-					for(var j = 0; j < reachable.length; j++)
-					{
-						var data = $("#" + reachable[j].name).mouseout().data('maphilight') || {};
-						data.alwaysOn = !data.alwaysOn;
-						$("#" + reachable[j].name).data('maphilight', data).trigger('alwaysOn.maphilight');
-					}
-				}
-			}
-			var data = $("#" + region).mouseout().data('maphilight') || {};
-			data.alwaysOn = !data.alwaysOn;
-			data.strokeWidth = 1;
-			data.fillOpacity = 0.4;
-			$("#" + region).data('maphilight', data).trigger('alwaysOn.maphilight');
-
-			highlighted = false;
-			reachable = [];
-		}
-		else if(!highlighted)
+		if(!highlighted)
 		{	
 			for(var i = 0; i < regions.length; i++)
 			{
 				if(regions[i].name === region && regions[i].color != ""){
 					highlighted = true;
-					highlightedRegion = regions[i];
-					reachable = findReachableAreas(regions[i], 2);
+					highlightedRegion = regions[i].name;
+					if(action === "move"){
+						reachable = findReachableAreas(regions[i], 2);
+					}
+					else{ // if(action === "attack")
+						reachable = findAttackableAreas(regions[i]);
+					}
 					for(var j = 0; j < reachable.length; j++)
 					{
 						var data = $("#" + reachable[j].name).mouseout().data('maphilight') || {};
@@ -192,6 +155,7 @@ function highlightReachableAreas(region)
 			
 		}
 }
+
 
 function findReachableAreas(region, moves){
 	var areas = [];
@@ -350,6 +314,25 @@ function showArmies(){
 		}	
 	}
 };
+
+function placeSerpent(){
+	var corners = [water36, water37, water38, water39];
+	var cornerNumber = Math.floor(Math.random() * 4);
+	var serpentCorner = corners[cornerNumber].name;
+	corners[cornerNumber].color = "serpent";
+	var serpentString = "<div class='army' id='army-" + serpentCorner + "'><div class='armymen'>";
+	serpentString += "<img class='serpent' src='images/serpent-";
+	if(cornerNumber % 2 === 0){
+		serpentString += "right";
+	}
+	else{
+		serpentString += "left";
+	}
+	serpentString += ".png'></div></div>";
+	console.log(serpentString);
+	$("#mapArea").append(serpentString);
+	
+}
 
 
 
