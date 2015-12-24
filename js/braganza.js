@@ -4,6 +4,7 @@ var highlighted = false;
 var highlightedRegion;
 var highlightedRegionName = "";
 var reachable = [];
+var reachableNames = [];
 
 $(document).ready(function(){
 	
@@ -31,21 +32,25 @@ $(document).ready(function(){
 		if(highlighted && region === highlightedRegionName){  // player reclicks highlighted area, cancel highlight
 			clearHighlight();
 		}
-		/*else if(highlighted && reachable.indexOf(region) !== -1){ // player clicks area surrounding highlighted area, take action
-			movePlayers(region);
-		}*/
+		else if(highlighted && reachableNames.indexOf(region) !== -1){	// player clicks area surrounding highlighted area, take action
+			for(var i = 0; i < reachable.length; i++){
+				if(reachable[i].name === region){
+					movePlayers(reachable[i]);
+				}
+			}
+		}
 		else if(!highlighted && region.color !== ""){ // player clicks area containing army, highlight it
 			highlightAreas(region, "move");
 		}
 	});
-	
+	/*
 	$('.army').click(function(){
 		//e.preventDefault();
 		var armyId = $(this).attr('id').toString();
 		var region = armyId.substr(5);
 		console.log("region = ");
 		console.log(region);
-	});
+	});*/
 	placeSerpent();
 	randomlyPopulateBoard();
 	showArmies();
@@ -53,7 +58,78 @@ $(document).ready(function(){
 });
 
 function movePlayers(region){
-	//if()
+	/*console.log("highlightedRegion = ");
+	console.log(highlightedRegion);
+	console.log("region = ");
+	console.log(region);
+	
+	console.log("highlightedRegion.name = " + highlightedRegion.name);
+	console.log("region.name = " + region.name);
+	*/
+	
+	if(region.type === "sea" && region.color !== ""){
+		region.moves--;
+	}
+	if(highlightedRegion.type === "sea" && region.type === "land" && region.color === ""){
+		region.moves = 1;
+	}
+	// possibly inaccurate if first move is from land to sea because soldiers might still have land move available; need confirmation
+	if(highlightedRegion.type === "land" || (highlightedRegion.landTravel.indexOf(region) === -1 && highlightedRegion.seaTravel.indexOf(region) === -1)){
+		highlightedRegion.moves = 0;
+	}
+	else{ 
+		highlightedRegion.moves = 1;
+	}
+	
+	if(region.color === highlightedRegion.color){
+		if(highlightedRegion.captain === true){
+			highlightedRegion.captain = false;
+			region.captain = true;
+		}
+		for(var i = region.soldiers; i < 8 && highlightedRegion.soldiers > 0; i++){
+			highlightedRegion.soldiers--;
+			region.soldiers++;
+		}
+	}
+	// cannons can only move if moving on boat
+	else if(highlightedRegion.type === "sea" && region.type === "sea"){
+		region.cannons = highlightedRegion.cannons;
+		highlightedRegion.cannons = 0;
+	}
+	
+	if(region.color === ""){
+		region.soldiers = highlightedRegion.soldiers;
+		highlightedRegion.soldiers = 0;
+		region.captain = highlightedRegion.captain;
+		highlightedRegion.captain = false;
+	}
+	
+	// if cannons are left on boat by themselves, remove them
+	if(highlightedRegion.type === "sea"){
+		if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
+			highlightedRegion.cannons = 0;
+		}
+	}
+	/*if(region.color === ""){
+		if(region.type === "land"){
+			region.moves = 1;
+		}
+		else{
+			region.moves = 2;
+		}
+	}*/
+	
+	region.color = highlightedRegion.color;
+
+	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
+		highlightedRegion.color = "";
+	}
+
+	$('.'+ region.name).remove();
+	$('.'+ highlightedRegion.name).remove();
+	$("#mapArea").append(showArmy(region));
+	$("#mapArea").append(showArmy(highlightedRegion));
+	clearHighlight();
 };
 
 function clearHighlight(){ 
@@ -72,6 +148,7 @@ function clearHighlight(){
 	highlightedRegionName = "";
 	highlighted = false;
 	reachable = [];
+	reachableNames = [];
 };
 
 function randomlyPopulateBoard(){
@@ -149,11 +226,14 @@ function highlightAreas(region, action)
 					else{ // if(action === "attack")
 						reachable = findAttackableAreas(regions[i]);
 					}
+				
 					for(var j = 0; j < reachable.length; j++)
 					{
 						var data = $("#" + reachable[j].name).mouseout().data('maphilight') || {};
 						data.alwaysOn = !data.alwaysOn;
 						$("#" + reachable[j].name).data('maphilight', data).trigger('alwaysOn.maphilight');
+						
+						reachableNames.push(reachable[j].name);
 					}
 					break;
 				}
@@ -366,12 +446,21 @@ function showArmy(territory){
 
 function showArmies(){
 	for(var i = 0; i < regions.length; i++){
-		if(regions[i].color != "" && regions[i].color != "serpent"){
+		if((regions[i].color != "" || regions[i].cannons > 0) && regions[i].color != "serpent"){
 			var army = showArmy(regions[i]);
 			$("#mapArea").append(army);
 		}	
+		else if(regions[i].color === "serpent"){
+			var serpentString = "<div class='army' id='army-" + regions[i].name + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
+			$("#mapArea").append(serpentString);
+		}
 	}
+	
 };
+
+function showSerpent(){
+	
+}
 
 function placeSerpent(){
 	var corners = [water36, water37, water38, water39];
@@ -379,15 +468,13 @@ function placeSerpent(){
 	var serpentCorner = corners[cornerNumber].name;
 	corners[cornerNumber].color = "serpent";
 	corners[cornerNumber].moves = 0;  
-	var serpentString = "<div class='army' id='army-" + serpentCorner + "'><div class='armymen'>";
-	serpentString += "<img class='serpent' src='images/serpent-";
-	if(cornerNumber % 2 === 0){
+	//var serpentString = "<div class='army' id='army-" + serpentCorner + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
+	/*if(cornerNumber % 2 === 0){
 		serpentString += "right";
 	}
 	else{
 		serpentString += "left";
-	}
-	serpentString += ".png'></div></div>";
-	console.log(serpentString);
-	$("#mapArea").append(serpentString);
+	}*/
+	//serpentString += ".png'></div></div>";
+	//$("#mapArea").append(serpentString);
 };
