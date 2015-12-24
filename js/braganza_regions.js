@@ -196,6 +196,7 @@ for(var i = 0; i < regions.length; i++)
 	regions[i].cannons = 0;
 	regions[i].captain = false;
 	regions[i].color = "";
+	regions[i].moves = 0;
 }
 
 for(var i = 0; i < 39; i++)
@@ -205,7 +206,7 @@ for(var i = 0; i < 39; i++)
 for(var i = 39; i < regions.length; i++)
 {
 	regions[i].type = "sea";
-	regions[i].boat = false;
+	//regions[i].boat = false;
 }
 
 conomopoint.name = "conomopoint";
@@ -489,7 +490,7 @@ water14.seaTravel = [water12, water13, water15];
 
 water15.name = "water15";
 water15.attack = [water11, water12, water14, water16];
-water15.landTravel = [];
+water15.landTravel = [gaphead, landsend];
 water15.seaTravel = [water11, water12, water14, water16];
 
 water16.name = "water16";

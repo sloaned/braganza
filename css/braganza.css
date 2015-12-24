@@ -47,17 +47,17 @@ html
 }
 
 .cannon{
-	width: 40px;
+	width: 36px;
 	height: auto;
 }
 
 .soldier{
-	height: 24px; 
+	height: 22px; 
 	width: auto;
 }
 
 .captain{
-	height: 40px;
+	height: 36px;
 	width: auto;
 }
 
@@ -363,7 +363,7 @@ html
 }
 
 #army-water20{
-	left: 92.5%;
+	left: 93%;
 	top: 73.5%;
 }
 

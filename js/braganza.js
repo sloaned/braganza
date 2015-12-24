@@ -1,7 +1,8 @@
 var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
 var diceAudio = new Audio('audio/dice-throw-on-gameboard.mp3');
 var highlighted = false;
-var highlightedRegion = "";
+var highlightedRegion;
+var highlightedRegionName = "";
 var reachable = [];
 
 $(document).ready(function(){
@@ -27,28 +28,33 @@ $(document).ready(function(){
 	$('.mapRegion').click(function(e){
 		e.preventDefault();
 		var region = $(this).attr('id');
-		if(highlighted && region === highlightedRegion)
-		{
+		if(highlighted && region === highlightedRegionName){  // player reclicks highlighted area, cancel highlight
 			clearHighlight();
 		}
-		else if(!highlighted && region.color !== "")
-		{
-			highlightAreas(region, "attack");
+		/*else if(highlighted && reachable.indexOf(region) !== -1){ // player clicks area surrounding highlighted area, take action
+			movePlayers(region);
+		}*/
+		else if(!highlighted && region.color !== ""){ // player clicks area containing army, highlight it
+			highlightAreas(region, "move");
 		}
 	});
 	
-	/*$('.army').click(function(e){
-		e.preventDefault();
+	$('.army').click(function(){
+		//e.preventDefault();
 		var armyId = $(this).attr('id').toString();
 		var region = armyId.substr(5);
 		console.log("region = ");
 		console.log(region);
-	});*/
+	});
 	placeSerpent();
 	randomlyPopulateBoard();
 	showArmies();
 
 });
+
+function movePlayers(region){
+	//if()
+};
 
 function clearHighlight(){ 
 	for(var i = 0; i < reachable.length; i++)
@@ -57,13 +63,13 @@ function clearHighlight(){
 		data.alwaysOn = !data.alwaysOn;
 		$("#" + reachable[i].name).data('maphilight', data).trigger('alwaysOn.maphilight');
 	}
-	var data = $("#" + highlightedRegion).mouseout().data('maphilight') || {};
+	var data = $("#" + highlightedRegionName).mouseout().data('maphilight') || {};
 	data.alwaysOn = !data.alwaysOn;
 	data.strokeWidth = 1;
 	data.fillOpacity = 0.4;
-	$("#" + highlightedRegion).data('maphilight', data).trigger('alwaysOn.maphilight');
+	$("#" + highlightedRegionName).data('maphilight', data).trigger('alwaysOn.maphilight');
 	
-	highlightedRegion = "";
+	highlightedRegionName = "";
 	highlighted = false;
 	reachable = [];
 };
@@ -83,7 +89,7 @@ function randomlyPopulateBoard(){
 		armies[i].color = colors[i];
 		
 		armies[i].territories = [];
-		
+
 		for(var j = 0; j < landEach; j++)
 		{
 			var num = values[Math.floor(Math.random() * values.length)];
@@ -98,7 +104,14 @@ function randomlyPopulateBoard(){
 		}
 		for(var j = 0; j < armies[i].territories.length; j++)
 		{
+			if(armies[i].territories[j].type === "sea"){
+				armies[i].territories[j].moves = 2;
+			}
+			else{
+				armies[i].territories[j].moves = 1;
+			}
 			armies[i].territories[j].color = armies[i].color;
+			
 			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 7) + 1;
 			var artillery = Math.ceil(Math.random() * 7);
 			if(artillery < 5)
@@ -128,9 +141,10 @@ function highlightAreas(region, action)
 			{
 				if(regions[i].name === region && regions[i].color != ""){
 					highlighted = true;
-					highlightedRegion = regions[i].name;
+					highlightedRegion = regions[i];
+					highlightedRegionName = regions[i].name;
 					if(action === "move"){
-						reachable = findReachableAreas(regions[i], 2);
+						reachable = findReachableAreas(regions[i]);
 					}
 					else{ // if(action === "attack")
 						reachable = findAttackableAreas(regions[i]);
@@ -156,33 +170,63 @@ function highlightAreas(region, action)
 		}
 }
 
-
-function findReachableAreas(region, moves){
+function findSerpentReachableAreas(region){   // can the sea serpent move through occupied territories? (currently no)
 	var areas = [];
 	var neighbors = [];
-
-	for(var i = 0; i < region.landTravel.length; i++){
-		if(region.landTravel[i].color === "" || (region.landTravel[i].color === region.color && (region.captain === true || region.landTravel[i].soldiers < 8))){
-			areas.push(region.landTravel[i]);
-		}
-	}
-	for(var i = 0; i < region.seaTravel.length; i++){
-		if(region.type === "land"){
-			if(region.seaTravel[i].color === region.color && (region.captain === true || region.seaTravel[i].soldiers < 8)){
+	
+	if(region.moves > 0){
+		for(var i = 0; i < region.seaTravel.length; i++){
+			if(region.seaTravel[i].color === ""){
 				areas.push(region.seaTravel[i]);
-			}
-		}
-		else if(region.type === "sea"){
-			if(region.seaTravel[i].color === "" || (region.seaTravel[i].color === region.color && (region.captain === true || region.seaTravel[i].soldiers < 8))){
-				areas.push(region.seaTravel[i]);
-			}
-			if(moves === 2 && region.seaTravel[i].color === "" || region.seaTravel[i].color === region.color){
 				neighbors.push(region.seaTravel[i]);
 			}
-		}		
+		}
+	}
+	if(region.moves === 2){
+		for(var i = 0; i < neighbors.length; i++){
+		
+			var neighbor = neighbors[i];
+			for(var j = 0; j < neighbor.seaTravel.length; j++){
+				if(neighbor.seaTravel[j].color === "" && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
+					areas.push(neighbor.seaTravel[j]);
+				}
+			}
+		}
+	}
+	return areas;
+};
+
+function findReachableAreas(region){
+	if(region.color === "serpent"){
+		return findSerpentReachableAreas(region);
 	}
 	
-	if(moves === 2 && region.type === "sea"){
+	var areas = [];
+	var neighbors = [];
+	if(region.moves > 0){
+		for(var i = 0; i < region.landTravel.length; i++){
+			if(region.landTravel[i].color === "" || (region.landTravel[i].color === region.color && (region.captain === true || region.landTravel[i].soldiers < 8))){
+				areas.push(region.landTravel[i]);
+			}
+		}
+		for(var i = 0; i < region.seaTravel.length; i++){
+			if(region.type === "land"){
+				if(region.seaTravel[i].color === region.color && region.seaTravel[i].moves > 0 && (region.captain === true || region.seaTravel[i].soldiers < 8)){
+					areas.push(region.seaTravel[i]);
+				}
+			}
+			else if(region.type === "sea"){
+				if(region.seaTravel[i].color === "" || (region.seaTravel[i].color === region.color && region.seaTravel[i].moves > 0 && (region.captain === true || region.seaTravel[i].soldiers < 8))){
+					areas.push(region.seaTravel[i]);
+				}
+				if(region.moves === 2 && region.seaTravel[i].color === "" || region.seaTravel[i].color === region.color){
+					neighbors.push(region.seaTravel[i]);
+					
+				}
+			}		
+		}
+	}
+	if(region.moves === 2 && region.type === "sea"){
 
 		for(var i = 0; i < neighbors.length; i++){
 		
@@ -202,7 +246,7 @@ function findReachableAreas(region, moves){
 					}
 				}
 			}
-			else if(neighbor.type === "land"){
+			/*else if(neighbor.type === "land"){
 				for(var j = 0; j < neighbor.landTravel.length; j++){
 					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1){
 						areas.push(neighbor.landTravel[j]);
@@ -213,16 +257,30 @@ function findReachableAreas(region, moves){
 						areas.push(neighbor.seaTravel[j]);
 					}
 				}
-			}
+			}*/
 		}		
 	}
 	return areas;
 };
 
 function findAttackableAreas(region){
+	
+	if(region.color === "serpent"){
+		return findSerpentAttackableAreas(region);
+	}
 	var areas = [];
 	for(var i = 0; i < region.attack.length; i++){
 		if(region.attack[i].color != "" && region.attack[i].color != "serpent" && region.attack[i].color != region.color){
+			areas.push(region.attack[i]);
+		}
+	}
+	return areas;
+};
+
+function findSerpentAttackableAreas(region){
+	var areas = [];
+	for(var i = 0; i < region.attack.length; i++){
+		if(region.attack[i].type === "sea" && region.attack[i].color !== ""){
 			areas.push(region.attack[i]);
 		}
 	}
@@ -320,6 +378,7 @@ function placeSerpent(){
 	var cornerNumber = Math.floor(Math.random() * 4);
 	var serpentCorner = corners[cornerNumber].name;
 	corners[cornerNumber].color = "serpent";
+	corners[cornerNumber].moves = 0;  
 	var serpentString = "<div class='army' id='army-" + serpentCorner + "'><div class='armymen'>";
 	serpentString += "<img class='serpent' src='images/serpent-";
 	if(cornerNumber % 2 === 0){
@@ -331,8 +390,4 @@ function placeSerpent(){
 	serpentString += ".png'></div></div>";
 	console.log(serpentString);
 	$("#mapArea").append(serpentString);
-	
-}
-
-
-
+};
