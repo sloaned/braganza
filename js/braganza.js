@@ -458,9 +458,6 @@ function showArmies(){
 	
 };
 
-function showSerpent(){
-	
-}
 
 function placeSerpent(){
 	var corners = [water36, water37, water38, water39];
@@ -468,13 +465,4 @@ function placeSerpent(){
 	var serpentCorner = corners[cornerNumber].name;
 	corners[cornerNumber].color = "serpent";
 	corners[cornerNumber].moves = 0;  
-	//var serpentString = "<div class='army' id='army-" + serpentCorner + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
-	/*if(cornerNumber % 2 === 0){
-		serpentString += "right";
-	}
-	else{
-		serpentString += "left";
-	}*/
-	//serpentString += ".png'></div></div>";
-	//$("#mapArea").append(serpentString);
 };
