@@ -5,6 +5,7 @@ var highlightedRegion;
 var highlightedRegionName = "";
 var reachable = [];
 var reachableNames = [];
+var destination;
 
 $(document).ready(function(){
 	
@@ -19,11 +20,11 @@ $(document).ready(function(){
 	$('img[usemap]').maphilight();
 	$('map').imageMapResize();
 	
-	var redDice = rollDice(5, "red");
+	/*var redDice = rollDice(5, "red");
 	var whiteDice = rollDice(5, "white");
 	diceAudio.play();
 	$("#mapArea").append(redDice);
-	$("#mapArea").append(whiteDice);
+	$("#mapArea").append(whiteDice);*/
 	
 	
 	$('.mapRegion').click(function(e){
@@ -35,7 +36,7 @@ $(document).ready(function(){
 		else if(highlighted && reachableNames.indexOf(region) !== -1){	// player clicks area surrounding highlighted area, take action
 			for(var i = 0; i < reachable.length; i++){
 				if(reachable[i].name === region){
-					movePlayers(reachable[i]);
+					battlePrompt(reachable[i]);
 				}
 			}
 		}
@@ -43,6 +44,8 @@ $(document).ready(function(){
 			highlightAreas(region, "move");
 		}
 	});
+	
+
 	/*
 	$('.army').click(function(){
 		//e.preventDefault();
@@ -57,7 +60,53 @@ $(document).ready(function(){
 
 });
 
-function movePlayers(region){
+function battlePrompt(region){
+	// account for situations where player choice of who to move is irrelevant
+	if(highlightedRegion.type === "sea" && region.type === "sea"){
+		moveArmy(region, highlightedRegion.captain, highlightedRegion.soldiers);
+		return;
+	}
+	if(highlightedRegion.captain && (highlightedRegion.soldiers === 0 || region.soldiers === 8)){
+		moveArmy(region, true, 0);
+		return;
+	}
+	if(!highlightedRegion.captain && (highlightedRegion.soldiers === 1 || region.soldiers === 7)){
+		moveArmy(region, false, 1);
+		return;
+	}
+	destination = region;
+	var battlePrompt = "<div class='prompt'><span>Move which troops?</span><br>";
+	if(highlightedRegion.captain){
+		battlePrompt += "Captain <input id='moveCaptain' type='checkbox'><br>";
+	}
+	if(highlightedRegion.soldiers > 0 && region.soldiers < 8){ // redundant? would this be caught already?
+		battlePrompt += "Soldiers <select id='moveSoldiers'>";
+		for(var i = 0; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
+			battlePrompt += "<option>" + i + "</option>";
+		}
+		battlePrompt += "</select>";
+	}
+	battlePrompt += "<span><button onclick='sendArmy()'>Move!</button><button onclick='cancelMove()'>Cancel</button></span></div>";
+	$('#army-'+ highlightedRegion.name).css("z-index", 1);
+	$('#army-'+ highlightedRegion.name).append(battlePrompt);
+};
+
+function sendArmy(){
+	var captain = $("#moveCaptain").prop('checked');
+	if(captain === undefined){
+		captain = false;
+	}
+	var soldiers = $("#moveSoldiers").val();
+	moveArmy(destination, captain, soldiers);
+};
+
+function cancelMove(){
+	$('.'+ highlightedRegion.name).remove();
+	$('#army-'+ highlightedRegion.name).css("z-index", 0);
+	$("#mapArea").append(showArmy(highlightedRegion));
+};
+
+function moveArmy(region, captain, soldiers){
 
 	// two moves in a boat
 	if(highlightedRegion.type === "sea" && highlightedRegion.seaTravel.indexOf(region) === -1 && highlightedRegion.landTravel.indexOf(region) === -1){
@@ -78,7 +127,7 @@ function movePlayers(region){
 		highlightedRegion.moves--;
 	}
 	
-	// land to sea
+	// land to sea, boat moves decrement
 	else if(highlightedRegion.type === "land" && region.type === "sea"){ 
 		region.moves--;
 	}
@@ -86,42 +135,40 @@ function movePlayers(region){
 	// anywhere to unoccupied land
 	else if(region.type === "land" && region.color === ""){ // possibly redundant? wouldn't it be zero already?
 		region.moves = 0;
-	}
+	}	
 	
-	
-	
-	// move the captain and as many soldiers as possible over
-	if(region.color === highlightedRegion.color){
+	// move to occupied territory
+	//if(region.color === highlightedRegion.color){
 		
 		if(region.type === "land")
 		{
-			if(highlightedRegion.captain === true){
+			if(captain === true){
 				highlightedRegion.captain = false;
 				region.newCaptain = true;
 			}
-			for(var i = region.soldiers + region.newSoldiers; i < 8 && highlightedRegion.soldiers > 0; i++){
+			for(var i = 0; i < soldiers; i++){
 				highlightedRegion.soldiers--;
 				region.newSoldiers++;
 			}
 		}
 		else{ // land to sea
-			if(highlightedRegion.captain === true){
+			if(captain === true){
 				highlightedRegion.captain = false;
 				region.captain = true;
 			}
-			for(var i = region.soldiers + region.newSoldiers; i < 8 && highlightedRegion.soldiers > 0; i++){
+			for(var i = 0; i < soldiers; i++){
 				highlightedRegion.soldiers--;
 				region.soldiers++;
 			}
 		}
 		
-	}
+//	}
 	// cannons can only move if moving on boat
-	else if(highlightedRegion.type === "sea" && region.type === "sea"){
+	/*else */if(highlightedRegion.type === "sea" && region.type === "sea"){
 		region.cannons = highlightedRegion.cannons;
 		highlightedRegion.cannons = 0;
 	}
-	
+	/*
 	// all soldiers/captain move to destination if destination is unoccupied
 	if(region.color === ""){
 		if(region.type === "land"){
@@ -135,21 +182,13 @@ function movePlayers(region){
 		highlightedRegion.soldiers = 0;
 		highlightedRegion.captain = false;
 	}
-	
+	*/
 	// if cannons are left on boat by themselves, remove them
 	if(highlightedRegion.type === "sea"){
 		if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
 			highlightedRegion.cannons = 0;
 		}
 	}
-	/*if(region.color === ""){
-		if(region.type === "land"){
-			region.moves = 1;
-		}
-		else{
-			region.moves = 2;
-		}
-	}*/
 	
 	region.color = highlightedRegion.color;
 
@@ -183,6 +222,7 @@ function movePlayers(region){
 
 	$('.'+ region.name).remove();
 	$('.'+ highlightedRegion.name).remove();
+	$('#army-'+ highlightedRegion.name).css("z-index", 0);
 	$("#mapArea").append(showArmy(region));
 	$("#mapArea").append(showArmy(highlightedRegion));
 	clearHighlight();
@@ -215,7 +255,7 @@ function randomlyPopulateBoard(){
 	{
 		values.push(i);
 	}
-	var landEach = Math.floor(30/armyNumber);
+	var landEach = Math.floor(34/armyNumber);
 	for(var i = 0; i < armyNumber; i++)
 	{
 		armies.push({});
@@ -245,7 +285,7 @@ function randomlyPopulateBoard(){
 			}
 			armies[i].territories[j].color = armies[i].color;
 			
-			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 7) + 1;
+			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 8);
 			var artillery = Math.ceil(Math.random() * 7);
 			if(artillery < 5)
 			{
@@ -306,6 +346,7 @@ function highlightAreas(region, action)
 		}
 }
 
+// currently only written for up to two moves
 function findSerpentReachableAreas(region){   // can the sea serpent move through occupied territories? (currently no)
 	var areas = [];
 	var neighbors = [];
@@ -354,10 +395,10 @@ function findReachableAreas(region){
 			else if(region.type === "sea"){
 				if(region.seaTravel[i].color === ""/* || (region.seaTravel[i].color === region.color && region.seaTravel[i].moves > 0 && (region.captain === true || region.seaTravel[i].soldiers < 8))*/){
 					areas.push(region.seaTravel[i]);
-				}
-				if(region.moves === 2 && region.seaTravel[i].color === "" || region.seaTravel[i].color === region.color){
 					neighbors.push(region.seaTravel[i]);
-					
+				}
+				if(region.moves === 2 && region.seaTravel[i].color === region.color){
+					neighbors.push(region.seaTravel[i]);	
 				}
 			}		
 		}
@@ -370,14 +411,14 @@ function findReachableAreas(region){
 			
 			if(neighbor.type === "sea" && (neighbor.soldiers < 8 || region.captain === true)){
 				for(var j = 0; j < neighbor.landTravel.length; j++){
-					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1){
+					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1 && neighbor.color === ""){
 						areas.push(neighbor.landTravel[j]);
 					}
 				}
 			}
 			if(neighbor.type === "sea"){
 				for(var j = 0; j < neighbor.seaTravel.length; j++){
-					if(neighbor.seaTravel[j].color === ""/* || (neighbor.seaTravel[j].color === region.color && (region.captain === true || neighbor.seaTravel[j].soldiers < 8)))*/ && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
+					if(neighbor.seaTravel[j].color === "" && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
 						areas.push(neighbor.seaTravel[j]);
 					}
 				}
@@ -493,7 +534,6 @@ function showArmy(territory){
 		armyString += "<img class='cannon' src='images/cannon-" + territory.color + ".png'>";
 	}
 	armyString += "</div></div>";
-	//console.log(armyString);
 	return armyString;
 };
 
@@ -504,13 +544,12 @@ function showArmies(){
 			$("#mapArea").append(army);
 		}	
 		else if(regions[i].color === "serpent"){
-			var serpentString = "<div class='army' id='army-" + regions[i].name + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
+			var serpentString = "<div class='army " + regions[i].name + "' id='army-" + regions[i].name + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
 			$("#mapArea").append(serpentString);
 		}
 	}
 	
 };
-
 
 function placeSerpent(){
 	var corners = [water36, water37, water38, water39];

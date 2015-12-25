@@ -4,6 +4,11 @@ html
 	margin: 0;
 }
 
+button{
+	border-radius: 5px;
+	margin: .2em;
+}
+
 .fit
 {
 	max-width: 100%;
@@ -46,6 +51,16 @@ html
 	left: 800px;
 }
 
+.prompt{
+	border: medium solid black;
+	border-radius: 10px;
+	background-color: white;
+	z-index: 1;
+	position: absolute;
+	text-align: center;
+	width: 150px;
+}
+
 .cannon{
 	width: 36px;
 	height: auto;
@@ -70,7 +85,7 @@ html
 
 .army{
 	position: absolute;
-	z-index: 1;
+	z-index: 0;
 }
 
 #army-conomopoint{
@@ -462,3 +477,393 @@ html
 	left: 93%;
 	top: 89%;
 }
+/*
+.conomopoint{
+	left: 1%;
+	top: 24.5%;
+}
+
+.northwestterritory{
+	left: 13%;
+	top: 27.5%;
+}
+
+.twopennyloaf{
+	left: 21%;
+	top: 17.5%;
+}
+
+.wingaersheek{
+	left: 28.8%;
+	top: 25.5%;
+}
+
+.redrocks{
+	left: 1.5%;
+	top: 44.5%;
+}
+
+.westparrish{
+	left: 11.5%;
+	top: 39.5%;
+}
+
+.rustisland{
+	left: 20.5%;
+	top: 39.5%;
+}
+
+.mountann{
+	left: 2%;
+	top: 58.5%;
+}
+
+.fernwood{
+	left: 21%;
+	top: 54%;
+}
+
+.coolidgepoint{
+	left: 1.5%;
+	top: 72.5%;
+}
+
+.ravenswood{
+	left: 13%;
+	top: 64%;
+}
+
+.stagefortpark{
+	left: 27%;
+	top: 62%;
+}
+
+.magnolia{
+	left: 10%;
+	top: 77.5%;
+}
+
+.hammondcastle{
+	left: 21%;
+	top: 71%;
+}
+
+.annisquam{
+	left: 48%;
+	top: 21%;
+}
+
+.bayview{
+	left: 54.5%;
+	top: 15.5%;
+}
+
+.lanesville{
+	left: 61%;
+	top: 11%;
+}
+
+.halibutpoint{
+	left: 70%;
+	top: 7.7%;
+}
+
+.pigeonhill{
+	left: 70.5%;
+	top: 20%;
+}
+
+.dogtown{
+	left: 58%;
+	top: 27%;
+}
+
+.riverdale{
+	left: 43.3%;
+	top: 40%;
+}
+
+.wheelerspoint{
+	left: 36%;
+	top: 44%;
+}
+
+.blackburnpark{
+	left: 50%;
+	top: 46%;
+}
+
+.raccoonrock{
+	left: 59%;
+	top: 40%;
+}
+
+.pooleshill{
+	left: 66.5%;
+	top: 34.5%;
+}
+
+.bearskinneck{
+	left: 73%;
+	top: 34.5%;
+}
+
+.gaphead{
+	left: 80%;
+	top: 37.5%;
+}
+
+.landsend{
+	left: 79.5%;
+	top: 48%;
+}
+
+.thatcherisland{
+	left: 92%;
+	top: 58.5%;
+}
+
+.capepond{
+	left: 64%;
+	top: 46.5%;
+}
+
+.longbeach{
+	left: 70%;
+	top: 51.5%;
+}
+
+.goodharborbeach{
+	left: 59%;
+	top: 58%;
+}
+
+.portageehill{
+	left: 48.5%;
+	top: 53.7%;
+}
+
+.cityhall{
+	left: 41%;
+	top: 54%;
+}
+
+.thefort{
+	left: 37.5%;
+	top: 57.5%;
+}
+
+.statefishpier{
+	left: 50%;
+	top: 62.5%;
+}
+
+.bassrocks{
+	left: 55%;
+	top: 69.5%;
+}
+
+.rockyneck{
+	left: 49%;
+	top: 72%;
+}
+
+.easternpoint{
+	left: 41%;
+	top: 84%;
+}
+
+.water1{
+	left: 6%;
+	top: 12%;
+}
+
+.water2{
+	left: 13%;
+	top: 1%;
+}
+
+.water3{
+	left: 21%;
+	top: 2%;
+}
+
+.water4{
+	left: 29.5%;
+	top: 4.5%;
+}
+
+.water5{
+	left: 30%;
+	top: 13%;
+}
+
+.water6{
+	left: 46%;
+	top: 6%;
+}
+
+.water7{
+	left: 40%;
+	top: 15%;
+}
+
+.water8{
+	left: 60%;
+	top: 0.5%;
+}
+
+.water9{
+	left: 78%;
+	top: 0.2%;
+}
+
+.water10{
+	left: 84%;
+	top: 1.5%;
+}
+
+.water11{
+	left: 92%;
+	top: 12%;
+}
+
+.water12{
+	left: 83.5%;
+	top: 12%;
+}
+
+.water13{
+	left: 77.5%;
+	top: 17%;
+}
+
+.water14{
+	left: 83%;
+	top: 27%;
+}
+
+.water15{
+	left: 93.5%;
+	top: 32%;
+}
+
+.water16{
+	left: 93.5%;
+	top: 48.5%;
+}
+
+.water17{
+	left: 72.5%;
+	top: 59.5%;
+}
+
+.water18{
+	left: 82%;
+	top: 61.5%;
+}
+
+.water19{
+	left: 88.5%;
+	top: 69%;
+}
+
+.water20{
+	left: 93%;
+	top: 73.5%;
+}
+
+.water21{
+	left: 64%;
+	top: 66.5%;
+}
+
+.water22{
+	left: 68%;
+	top: 78%;
+}
+
+.water23{
+	left: 78.5%;
+	top: 76%;
+}
+
+.water24{
+	left: 77%;
+	top: 89%;
+}
+
+.water25{
+	left: 86%;
+	top: 87%;
+}
+
+.water26{
+	left: 59.5%;
+	top: 75%;
+}
+
+.water27{
+	left: 48%;
+	top: 85.5%;
+}
+
+.water28{
+	left: 59%;
+	top: 91.5%;
+}
+
+.water29{
+	left: 10%;
+	top: 89%;
+}
+
+.water30{
+	left: 17%;
+	top: 87%;
+}
+
+.water31{
+	left: 25%;
+	top: 85.3%;
+}
+
+.water32{
+	left: 29%;
+	top: 79%;
+}
+
+.water33{
+	left: 34%;
+	top: 68%;
+}
+
+.water34{
+	left: 31.5%;
+	top: 56.5%;
+}
+
+.water35{
+	left: 31%;
+	top: 38%;
+}
+
+.water36{
+	left: 1%;
+	top: 1%;
+}
+
+.water37{
+	left: 92.5%;
+	top: 1.5%;
+}
+
+.water38{
+	left: 1.5%;
+	top: 90.5%;
+}
+
+.water39{
+	left: 93%;
+	top: 89%;
+}*/
