@@ -137,52 +137,36 @@ function moveArmy(region, captain, soldiers){
 		region.moves = 0;
 	}	
 	
-	// move to occupied territory
-	//if(region.color === highlightedRegion.color){
-		
-		if(region.type === "land")
-		{
-			if(captain === true){
-				highlightedRegion.captain = false;
-				region.newCaptain = true;
-			}
-			for(var i = 0; i < soldiers; i++){
-				highlightedRegion.soldiers--;
-				region.newSoldiers++;
-			}
+	// move troops	
+	if(region.type === "land")
+	{
+		if(captain === true){	
+			highlightedRegion.captain = false;
+			region.newCaptain = true;		
 		}
-		else{ // land to sea
-			if(captain === true){
-				highlightedRegion.captain = false;
-				region.captain = true;
-			}
-			for(var i = 0; i < soldiers; i++){
-				highlightedRegion.soldiers--;
-				region.soldiers++;
-			}
+		for(var i = 0; i < soldiers; i++){
+			highlightedRegion.soldiers--;
+			region.newSoldiers++;
 		}
+	}
+	else{
+		if(captain === true){
+			highlightedRegion.captain = false;
+			region.captain = true;
+		}
+		for(var i = 0; i < soldiers; i++){
+			highlightedRegion.soldiers--;
+			region.soldiers++;
+		}
+	}
 		
-//	}
-	// cannons can only move if moving on boat
-	/*else */if(highlightedRegion.type === "sea" && region.type === "sea"){
+
+	
+	if(highlightedRegion.type === "sea" && region.type === "sea"){
 		region.cannons = highlightedRegion.cannons;
 		highlightedRegion.cannons = 0;
 	}
-	/*
-	// all soldiers/captain move to destination if destination is unoccupied
-	if(region.color === ""){
-		if(region.type === "land"){
-			region.newCaptain = highlightedRegion.captain;
-			region.newSoldiers = highlightedRegion.soldiers;
-		}
-		else{
-			region.captain = highlightedRegion.captain;
-			region.soldiers = highlightedRegion.soldiers;
-		}
-		highlightedRegion.soldiers = 0;
-		highlightedRegion.captain = false;
-	}
-	*/
+
 	// if cannons are left on boat by themselves, remove them
 	if(highlightedRegion.type === "sea"){
 		if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
@@ -512,28 +496,33 @@ function rollDice(dice, color){
 };
 
 function showArmy(territory){
-	var armyString = "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-	if(territory.captain === true || territory.newCaptain === true){
-		armyString += "<img class='captain " + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
-	}
-	for(var i = 0; i < territory.soldiers; i++){
-		armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
-	if(i === 3 || (territory.newSoldiers === 0 && i === territory.soldiers-1)){
-			armyString += "<br>";
+	var armyString = "";
+	if(territory.color !== ""){
+		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
+		armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
+		if(territory.captain === true || territory.newCaptain === true){
+			armyString += "<img class='captain " + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
 		}
-	}
-	if(territory.newSoldiers > 0){
-		for(var i = territory.soldiers; i < territory.soldiers + territory.newSoldiers; i++){
+		for(var i = 0; i < territory.soldiers; i++){
 			armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
-			if(i === 3 || i === (territory.soldiers + territory.newSoldiers -1)){
+		if(i === 3 || (territory.newSoldiers === 0 && i === territory.soldiers-1)){
 				armyString += "<br>";
 			}
 		}
+		if(territory.newSoldiers > 0){
+			for(var i = territory.soldiers; i < territory.soldiers + territory.newSoldiers; i++){
+				armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
+				if(i === 3 || i === (territory.soldiers + territory.newSoldiers -1)){
+					armyString += "<br>";
+				}
+			}
+		}
+		for(var i = 0; i < territory.cannons; i++){
+			armyString += "<img class='cannon' src='images/cannon-" + territory.color + ".png'>";
+		}
+		armyString += "</div></div>";
 	}
-	for(var i = 0; i < territory.cannons; i++){
-		armyString += "<img class='cannon' src='images/cannon-" + territory.color + ".png'>";
-	}
-	armyString += "</div></div>";
+	
 	return armyString;
 };
 

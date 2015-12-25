@@ -51,6 +51,14 @@ button{
 	left: 800px;
 }
 
+.showMoves{
+	border: thin solid black;
+	border-radius: 5px;
+	background-color: white;
+	text-align: center;
+	padding: 5px;
+}
+
 .prompt{
 	border: medium solid black;
 	border-radius: 10px;
@@ -189,12 +197,12 @@ button{
 }
 
 #army-riverdale{
-	left: 43.3%;
+	left: 43.7%;
 	top: 40%;
 }
 
 #army-wheelerspoint{
-	left: 36%;
+	left: 36.6%;
 	top: 44%;
 }
 
@@ -254,7 +262,7 @@ button{
 }
 
 #army-cityhall{
-	left: 41%;
+	left: 42%;
 	top: 54%;
 }
 
