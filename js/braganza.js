@@ -58,38 +58,63 @@ $(document).ready(function(){
 });
 
 function movePlayers(region){
-	/*console.log("highlightedRegion = ");
-	console.log(highlightedRegion);
-	console.log("region = ");
-	console.log(region);
-	
-	console.log("highlightedRegion.name = " + highlightedRegion.name);
-	console.log("region.name = " + region.name);
-	*/
-	
-	if(region.type === "sea" && region.color !== ""){
-		region.moves--;
-	}
-	if(highlightedRegion.type === "sea" && region.type === "land" && region.color === ""){
-		region.moves = 1;
-	}
-	// possibly inaccurate if first move is from land to sea because soldiers might still have land move available; need confirmation
-	if(highlightedRegion.type === "land" || (highlightedRegion.landTravel.indexOf(region) === -1 && highlightedRegion.seaTravel.indexOf(region) === -1)){
+
+	// two moves in a boat
+	if(highlightedRegion.type === "sea" && highlightedRegion.seaTravel.indexOf(region) === -1 && highlightedRegion.landTravel.indexOf(region) === -1){
+		//console.log("two boat moves");
 		highlightedRegion.moves = 0;
 	}
-	else{ 
-		highlightedRegion.moves = 1;
+	
+	// sea to sea, 1 space moved
+	else if(highlightedRegion.type === "sea" && region.type === "sea"){
+		//console.log("sea to sea, 1 move");
+		region.moves = highlightedRegion.moves - 1;
+		highlightedRegion.moves = 0;
 	}
 	
+	// sea to land in one move, boat moves decrement
+	else if(highlightedRegion.type === "sea"){
+		//console.log("boat to shore, one move");
+		highlightedRegion.moves--;
+	}
+	
+	// land to sea
+	else if(highlightedRegion.type === "land" && region.type === "sea"){ 
+		region.moves--;
+	}
+	
+	// anywhere to unoccupied land
+	else if(region.type === "land" && region.color === ""){ // possibly redundant? wouldn't it be zero already?
+		region.moves = 0;
+	}
+	
+	
+	
+	// move the captain and as many soldiers as possible over
 	if(region.color === highlightedRegion.color){
-		if(highlightedRegion.captain === true){
-			highlightedRegion.captain = false;
-			region.captain = true;
+		
+		if(region.type === "land")
+		{
+			if(highlightedRegion.captain === true){
+				highlightedRegion.captain = false;
+				region.newCaptain = true;
+			}
+			for(var i = region.soldiers + region.newSoldiers; i < 8 && highlightedRegion.soldiers > 0; i++){
+				highlightedRegion.soldiers--;
+				region.newSoldiers++;
+			}
 		}
-		for(var i = region.soldiers; i < 8 && highlightedRegion.soldiers > 0; i++){
-			highlightedRegion.soldiers--;
-			region.soldiers++;
+		else{ // land to sea
+			if(highlightedRegion.captain === true){
+				highlightedRegion.captain = false;
+				region.captain = true;
+			}
+			for(var i = region.soldiers + region.newSoldiers; i < 8 && highlightedRegion.soldiers > 0; i++){
+				highlightedRegion.soldiers--;
+				region.soldiers++;
+			}
 		}
+		
 	}
 	// cannons can only move if moving on boat
 	else if(highlightedRegion.type === "sea" && region.type === "sea"){
@@ -97,10 +122,17 @@ function movePlayers(region){
 		highlightedRegion.cannons = 0;
 	}
 	
+	// all soldiers/captain move to destination if destination is unoccupied
 	if(region.color === ""){
-		region.soldiers = highlightedRegion.soldiers;
+		if(region.type === "land"){
+			region.newCaptain = highlightedRegion.captain;
+			region.newSoldiers = highlightedRegion.soldiers;
+		}
+		else{
+			region.captain = highlightedRegion.captain;
+			region.soldiers = highlightedRegion.soldiers;
+		}
 		highlightedRegion.soldiers = 0;
-		region.captain = highlightedRegion.captain;
 		highlightedRegion.captain = false;
 	}
 	
@@ -121,8 +153,32 @@ function movePlayers(region){
 	
 	region.color = highlightedRegion.color;
 
+	
 	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
-		highlightedRegion.color = "";
+		highlightedRegion.moves = 0; // redundant?
+		if(highlightedRegion.newSoldiers === 0){
+			highlightedRegion.color = "";
+		}
+	}
+	
+	// boat to land in two moves, boat must move up to the land
+	if(highlightedRegion.type === "sea" && region.type === "land" && highlightedRegion.landTravel.indexOf(region) === -1){
+		for(var i = 0; i < reachable.length; i++){
+			if(reachable[i].type === "sea" && reachable[i].landTravel.indexOf(region) !== -1){
+				reachable[i].color = highlightedRegion.color;
+				highlightedRegion.color = "";
+				reachable[i].captain = highlightedRegion.captain;
+				highlightedRegion.captain = false;
+				reachable[i].soldiers = highlightedRegion.soldiers;
+				highlightedRegion.soldiers = 0;
+				reachable[i].cannons = highlightedRegion.cannons;
+				highlightedRegion.cannons = 0;
+				
+				$('.'+reachable[i].name).remove();
+				$("#mapArea").append(showArmy(reachable[i]));
+				break;
+			}
+		}
 	}
 
 	$('.'+ region.name).remove();
@@ -296,7 +352,7 @@ function findReachableAreas(region){
 				}
 			}
 			else if(region.type === "sea"){
-				if(region.seaTravel[i].color === "" || (region.seaTravel[i].color === region.color && region.seaTravel[i].moves > 0 && (region.captain === true || region.seaTravel[i].soldiers < 8))){
+				if(region.seaTravel[i].color === ""/* || (region.seaTravel[i].color === region.color && region.seaTravel[i].moves > 0 && (region.captain === true || region.seaTravel[i].soldiers < 8))*/){
 					areas.push(region.seaTravel[i]);
 				}
 				if(region.moves === 2 && region.seaTravel[i].color === "" || region.seaTravel[i].color === region.color){
@@ -321,23 +377,11 @@ function findReachableAreas(region){
 			}
 			if(neighbor.type === "sea"){
 				for(var j = 0; j < neighbor.seaTravel.length; j++){
-					if((neighbor.seaTravel[j].color === "" || (neighbor.seaTravel[j].color === region.color && (region.captain === true || neighbor.seaTravel[j].soldiers < 8))) && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
+					if(neighbor.seaTravel[j].color === ""/* || (neighbor.seaTravel[j].color === region.color && (region.captain === true || neighbor.seaTravel[j].soldiers < 8)))*/ && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
 						areas.push(neighbor.seaTravel[j]);
 					}
 				}
 			}
-			/*else if(neighbor.type === "land"){
-				for(var j = 0; j < neighbor.landTravel.length; j++){
-					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1){
-						areas.push(neighbor.landTravel[j]);
-					}
-				}
-				for(var j = 0; j < neighbor.seaTravel.length; j++){
-					if(((neighbor.seaTravel[j].color === region.color && (region.captain === true || neighbor.seaTravel[j].soldiers < 8))) && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
-						areas.push(neighbor.seaTravel[j]);
-					}
-				}
-			}*/
 		}		
 	}
 	return areas;
@@ -428,19 +472,28 @@ function rollDice(dice, color){
 
 function showArmy(territory){
 	var armyString = "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-	if(territory.captain === true){
+	if(territory.captain === true || territory.newCaptain === true){
 		armyString += "<img class='captain " + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
 	}
 	for(var i = 0; i < territory.soldiers; i++){
 		armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
-		if(i === 3 || i === territory.soldiers-1){
+	if(i === 3 || (territory.newSoldiers === 0 && i === territory.soldiers-1)){
 			armyString += "<br>";
+		}
+	}
+	if(territory.newSoldiers > 0){
+		for(var i = territory.soldiers; i < territory.soldiers + territory.newSoldiers; i++){
+			armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
+			if(i === 3 || i === (territory.soldiers + territory.newSoldiers -1)){
+				armyString += "<br>";
+			}
 		}
 	}
 	for(var i = 0; i < territory.cannons; i++){
 		armyString += "<img class='cannon' src='images/cannon-" + territory.color + ".png'>";
 	}
 	armyString += "</div></div>";
+	//console.log(armyString);
 	return armyString;
 };
 
@@ -462,7 +515,5 @@ function showArmies(){
 function placeSerpent(){
 	var corners = [water36, water37, water38, water39];
 	var cornerNumber = Math.floor(Math.random() * 4);
-	var serpentCorner = corners[cornerNumber].name;
 	corners[cornerNumber].color = "serpent";
-	corners[cornerNumber].moves = 0;  
 };
