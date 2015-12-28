@@ -174,6 +174,10 @@ commandPosts.push(halibutpoint);
 commandPosts.push(dogtown);
 commandPosts.push(annisquam);
 
+for(var i = 0; i < commandPosts.length; i++){
+	commandPosts[i].flag = false;
+}
+
 var stagingAreas = [];
 
 stagingAreas.push(conomopoint);
@@ -231,7 +235,6 @@ wingaersheek.name = "wingaersheek";
 wingaersheek.attack = [twopennyloaf, northwestterritory, rustisland, water7, water35];
 wingaersheek.landTravel = [twopennyloaf, northwestterritory, rustisland];
 wingaersheek.seaTravel = [water7, water35];
-wingaersheek.flag = "";
 
 redrocks.name = "redrocks";
 redrocks.attack = [conomopoint, westparrish, fernwood, mountann];
@@ -249,7 +252,6 @@ rustisland.landTravel = [northwestterritory, wingaersheek, westparrish, fernwood
 rustisland.seaTravel = [water34, water35];
 
 mountann.name = "mountann";
-mountann.attack = [redrocks, fernwood, ravenswood, coolidgepoint];
 mountann.attack = [redrocks, fernwood, ravenswood, coolidgepoint];
 mountann.landTravel = [redrocks, fernwood, ravenswood, coolidgepoint];
 mountann.seaTravel = [];
@@ -278,19 +280,16 @@ magnolia.name = "magnolia";
 magnolia.attack = [coolidgepoint, ravenswood, hammondcastle, water29, water30, water38];
 magnolia.landTravel = [coolidgepoint, ravenswood, hammondcastle];
 magnolia.seaTravel = [water38];
-magnolia.flag = "";
 
 hammondcastle.name = "hammondcastle";
 hammondcastle.attack = [magnolia, ravenswood, stagefortpark, water31, water32];
 hammondcastle.landTravel = [magnolia, ravenswood, stagefortpark];
 hammondcastle.seaTravel = [];
-hammondcastle.flag = "";
 
 annisquam.name = "annisquam";
 annisquam.attack = [riverdale, dogtown, bayview, water7, water35];
 annisquam.landTravel = [riverdale, dogtown, bayview];
 annisquam.seaTravel = [water7, water35];
-annisquam.flag = "";
 
 bayview.name = "bayview";
 bayview.attack = [annisquam, dogtown, lanesville, water7];
@@ -306,7 +305,6 @@ halibutpoint.name = "halibutpoint";
 halibutpoint.attack = [lanesville, pigeonhill, water9];
 halibutpoint.landTravel = [lanesville, pigeonhill];
 halibutpoint.seaTravel = [];
-halibutpoint.flag = "";
 
 wheelerspoint.name = "wheelerspoint";
 wheelerspoint.attack = [rustisland, riverdale, thefort, cityhall, water34, water35];
@@ -322,7 +320,6 @@ dogtown.name = "dogtown";
 dogtown.attack = [riverdale, annisquam, bayview, lanesville, pigeonhill, pooleshill, raccoonrock, blackburnpark];
 dogtown.landTravel = [riverdale, annisquam, bayview, lanesville, pigeonhill, pooleshill, raccoonrock, blackburnpark];
 dogtown.seaTravel = [];
-dogtown.flag = "";
 
 pigeonhill.name = "pigeonhill";
 pigeonhill.attack = [dogtown, lanesville, halibutpoint, bearskinneck, pooleshill, water9, water12, water13];
@@ -333,13 +330,11 @@ thefort.name = "thefort";
 thefort.attack = [wheelerspoint, cityhall, statefishpier, stagefortpark, water33, water34];
 thefort.landTravel = [wheelerspoint, cityhall, statefishpier, stagefortpark];
 thefort.seaTravel = [water33, water34];
-thefort.flag = "";
 
 cityhall.name = "cityhall";
 cityhall.attack = [wheelerspoint, riverdale, blackburnpark, portageehill, statefishpier, thefort];
 cityhall.landTravel = [wheelerspoint, riverdale, blackburnpark, portageehill, statefishpier, thefort];
 cityhall.seaTravel = [];
-cityhall.flag = "";
 
 blackburnpark.name = "blackburnpark";
 blackburnpark.attack = [riverdale, dogtown, raccoonrock, capepond, goodharborbeach, portageehill, cityhall];
@@ -360,7 +355,6 @@ bearskinneck.name = "bearskinneck";
 bearskinneck.attack = [pooleshill, pigeonhill, gaphead, capepond, water14];
 bearskinneck.landTravel = [pooleshill, pigeonhill, gaphead, capepond];
 bearskinneck.seaTravel = [water14];
-bearskinneck.flag = "";
 
 gaphead.name = "gaphead";
 gaphead.attack = [capepond, bearskinneck, longbeach, landsend, water14, water15];
@@ -376,7 +370,6 @@ thatcherisland.name = "thatcherisland";
 thatcherisland.attack = [water16, water18, water19, water20];
 thatcherisland.landTravel = [];
 thatcherisland.seaTravel = [water16];
-thatcherisland.flag = "";
 
 longbeach.name = "longbeach";
 longbeach.attack = [goodharborbeach, capepond, gaphead, landsend, water17];
@@ -397,13 +390,11 @@ portageehill.name = "portageehill";
 portageehill.attack = [cityhall, blackburnpark, goodharborbeach, statefishpier];
 portageehill.landTravel = [cityhall, blackburnpark, goodharborbeach, statefishpier];
 portageehill.seaTravel = [];
-portageehill.flag = "";
 
 statefishpier.name = "statefishpier";
 statefishpier.attack = [thefort, cityhall, portageehill, goodharborbeach, bassrocks, rockyneck, water33];
 statefishpier.landTravel = [thefort, cityhall, portageehill, goodharborbeach, bassrocks, rockyneck];
 statefishpier.seaTravel = [water33];
-statefishpier.flag = "";
 
 rockyneck.name = "rockyneck";
 rockyneck.attack = [statefishpier, bassrocks, easternpoint, water33];
@@ -419,7 +410,6 @@ easternpoint.name = "easternpoint";
 easternpoint.attack = [rockyneck, bassrocks, water27, water31, water32, water33];
 easternpoint.landTravel = [rockyneck, bassrocks];
 easternpoint.seaTravel = [water27, water33];
-easternpoint.flag = "";
 
 water1.name = "water1";
 water1.attack = [water2, water3, water36, conomopoint, northwestterritory, twopennyloaf];
@@ -512,7 +502,7 @@ water18.landTravel = [landsend];
 water18.seaTravel = [water16, water17, water19, water21, water22, water23];
 
 water19.name = "water19";
-water19.attack = [water18, water20, water23, water24, water25];
+water19.attack = [water18, water20, water23, water24, water25, thatcherisland];
 water19.landTravel = [];
 water19.seaTravel = [water18, water20, water23, water24, water25];
 
@@ -616,5 +606,71 @@ water39.attack = [water20, water25];
 water39.landTravel = [];
 water39.seaTravel = [water20, water25];
 
+/*function getCaptainImage(commandPost){
+	switch(commandPost){
+		case "annisquam":
+			return "images/captain-andrew-haraden-the-rogue-annisquam.png";
+		case "wingaersheek":
+			return "images/captain-chief-masconomet-the-brave-wingaersheek.png";
+		case "portageehill":
+			return "images/captain-clayton-morrissey-the-skipper-portageehill.png";
+		case "bearskinneck":
+			return "images/captain-ebenezer-babson-the-huntsman-bearskinneck.png";
+		case "halibutpoint":
+			return "images/captain-hannah-jumper-the-hatchet-halibutpoint.png";
+		case "statefishpier":
+			return "images/captain-howard-blackburn-the-old-salt-statefishpier.png";
+		case "hammondcastle":
+			return "images/captain-john-hammond-the-inventor-hammondcastle.png";
+		case "thatcherisland":
+			return "images/captain-john-phillips-the-cutthroat-thatcherisland.png";
+		case "thefort":
+			return "images/captain-joseph-foster-the-patriot-thefort.png";
+		case "cityhall":
+			return "images/captain-judith-sargent-murray-the-bard-cityhall.png";
+		case "stagefortpark":
+			return "images/captain-robin-freeman-the-freeman-stagefortpark.png";
+		case "dogtown":
+			return "images/captain-thomasine-younger-the-witch-queen-dogtown.png";
+		case "easternpoint":
+			return "images/captain-thomas-niles-the-baron-easternpoint.png";
+		default:
+			break;
+		
+	}
+}*/
 
+function getCaptainImage(commandPost){
+	switch(commandPost){
+		case "annisquam":
+			return "rogue";
+		case "wingaersheek":
+			return "brave";
+		case "portageehill":
+			return "skipper";
+		case "bearskinneck":
+			return "huntsman";
+		case "halibutpoint":
+			return "hatchet";
+		case "statefishpier":
+			return "oldsalt";
+		case "hammondcastle":
+			return "inventor";
+		case "thatcherisland":
+			return "cutthroat";
+		case "thefort":
+			return "patriot";
+		case "cityhall":
+			return "bard";
+		case "stagefortpark":
+			return "freeman";
+		case "dogtown":
+			return "witch";
+		case "easternpoint":
+			return "baron";
+		default:
+			break;
+		
+	}
+}
 

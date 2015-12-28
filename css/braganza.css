@@ -30,6 +30,49 @@ button{
 	position: relative;
 }
 
+.captainImage{
+	height: 200px;
+	width: auto;
+}
+
+.tint{
+	overflow: hidden;
+	height: 100%;
+	z-index: 2;
+}
+
+.tint .red{
+	background: rgba(255, 0, 0, 0.3);
+}
+
+.tint .orange{
+	background: rgba(253, 145, 21, 0.3);
+}
+
+.tint .yellow{
+	background: rgba(255,255,0,0.3);
+}
+
+.tint .green{
+	background: rgba(0, 255, 0, 0.3);
+}
+
+.tint .blue{
+	background: rgba(0, 0, 255, 0.3);
+}
+
+.tint .purple{
+	background: rgba(191, 63, 163, 0.3));
+}
+
+.patriot{
+	background: url(/images/captain-andrew-haraden-the-rogue-annisquam.png) 0 0 no-repeat fixed;
+}
+
+.brave{
+	background: url(/images/captain-chief-masconomet-the-brave-wingaersheek.png) 0 0 no-repeat fixed;
+}
+
 .dice, .armymen{
 	text-align: center;
 }
@@ -49,6 +92,10 @@ button{
 	position: absolute;
 	top: 500px;
 	left: 800px;
+}
+
+#gameInfo{
+	text-align: center;
 }
 
 .showMoves{

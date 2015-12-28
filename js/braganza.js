@@ -12,7 +12,9 @@ var reachable = [];
 var reachableNames = [];
 var destination;
 var action = false;
-var actionType = "battle";
+//var actionType = "battle";
+var inGame = false;
+var game = {state: ""};
 
 $(document).ready(function(){
 	
@@ -45,28 +47,78 @@ $(document).ready(function(){
 				for(var i = 0; i < reachable.length; i++){
 					if(reachable[i].name === region){
 						action = true;
-						//movePrompt(reachable[i]);
-						
-						var region = reachable[i];
-						//var shots = reachable[i].shots;
-						var attackerKills = 0;
-						var defenderKills = 0;
-						setTimeout(function(){
+						if(game.state === "move"){
+							movePrompt(reachable[i]);
+						}
+						else if(game.state === "battle"){
+							var region = reachable[i];
+							var attackerKills = 0;
+							var defenderKills = 0;
 							setTimeout(function(){
-								endBattle(region, attackerKills, defenderKills);
-							}, (region.shots * 1300) + 3000);
-							defenderKills = battle(highlightedRegion, region.shots);
-						}, (highlightedRegion.shots * 1300) + 1000);
-						
-						attackerKills = battle(reachable[i], highlightedRegion.shots);	
-						
+								setTimeout(function(){
+									endBattle(region, attackerKills, defenderKills);
+								}, (region.shots * 1300) + 2200);
+								defenderKills = battle(highlightedRegion, region.shots);
+							}, (highlightedRegion.shots * 1300) + 900);
+							
+							attackerKills = battle(reachable[i], highlightedRegion.shots);	
+						}
+											
 					}
 				}
 			}
 		}
 		else if(!highlighted && region.color !== ""){ // player clicks area containing army, highlight it
-			highlightAreas(region, "attack");
+			if(game.state === "move"){
+				highlightAreas(region, "move");
+			}
+			else if(game.state === "battle"){
+				highlightAreas(region, "attack");
+			}
+			
 		}
+	});
+	
+	$("#newGame").click(function(e){
+		resetBoard();
+		game = {};
+		game.state = "move";
+		game.players = [];
+		game.over = false;
+		var numPlayers = $("#numberOfPlayers").val();
+		var commandPostVals = [];
+		for(var i = 0; i < 13; i++){
+			commandPostVals.push(i);
+		}
+		var commandPost;
+		for(var i = 0; i < numPlayers; i++){
+			game.players.push({});
+			game.players[i].color = colors[i];
+			commandPost = Math.floor(Math.random() * commandPostVals.length);
+			game.players[i].commandPost = commandPosts[commandPostVals[commandPost]];
+			game.players[i].commandPost.color = colors[i];
+			game.players[i].commandPost.cannons = 1;
+			game.players[i].commandPost.captain = true;
+			commandPostVals.splice(commandPost, 1);
+		
+			game.players[i].cannons = 3;
+			game.players[i].soldiers = 39;
+			game.players[i].captainImage = getCaptainImage(game.players[i].commandPost.name);
+			
+			$("#gameInfo").append("<span class='captainImage "  + game.players[i].captainImage + "'><div class='tint " + game.players[i].color + "'</span>");
+		}
+		for(var i = 0; i < regions.length; i++){
+			if(regions[i].color !== "" && regions[i].color !== "serpent"){
+				if(regions[i].type === "sea"){
+					regions[i].moves = 2;
+				}
+				else{
+					regions[i].moves = 1;
+				}
+			}
+		}
+		calculateAllShots();
+		showArmies();
 	});
 	
 
@@ -78,12 +130,33 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	placeSerpent();
+	/*placeSerpent();
 	randomlyPopulateBoard();
 	calculateAllShots();
-	showArmies();
+	showArmies();*/
 
 });
+
+
+
+function resetBoard(){
+	for(var i = 0; i < regions.length; i++)
+	{
+		regions[i].soldiers = 0;
+		regions[i].cannons = 0;
+		regions[i].captain = false;
+		regions[i].color = "";
+		regions[i].moves = 0;
+		regions[i].shots = 0;
+		regions[i].newSoldiers = 0;
+		regions[i].newCaptain = false;
+	}
+	for(var i = 0; i < commandPosts.length; i++){
+		commandPosts[i].flag = false;
+	}
+	$("#gameInfo").empty();
+	$(".army").remove();
+}
 
 
 	
@@ -155,7 +228,6 @@ function endBattle(region, attackerKills, defenderKills){
 	
 	if(region.type === "land" && region.color === "" && highlightedRegion.color !== "" && highlightedRegion.landTravel.indexOf(region) !== -1){
 		//attacker won, can move troops in
-		console.log("victory!");
 		victoryMove(region);
 	}
 	else{
@@ -185,6 +257,14 @@ function victoryMove(region){
 		movePrompt += "</select>";
 	}
 	movePrompt += "<span><button onclick='sendArmy()'>Move in!</button><button onclick='resetBoardAfterBattle()'>No move</button></span></div>";
+	$('.battle').remove();
+	calculateShots(highlightedRegion);
+	calculateShots(region);
+	$('.'+ region.name).remove();
+	$('.'+ highlightedRegion.name).remove();
+	$("#mapArea").append(showArmy(region));
+	$("#mapArea").append(showArmy(highlightedRegion));
+	
 	$('#army-'+ highlightedRegion.name).css("z-index", 1);
 	$('#army-'+ highlightedRegion.name).append(movePrompt);
 };
@@ -242,7 +322,6 @@ function noVictoryMove(){
 	$('#army-'+ highlightedRegion.name).css("z-index", 0);
 	$("#mapArea").append(showArmy(highlightedRegion));
 	
-	
 };
 
 
@@ -291,7 +370,7 @@ function movePrompt(region){
 	if(highlightedRegion.captain){
 		movePrompt += "Captain <input id='moveCaptain' type='checkbox'><br>";
 	}
-	if(highlightedRegion.soldiers > 0 && region.soldiers < 8){ // redundant? would this be caught already?
+	if(highlightedRegion.soldiers > 0 && region.soldiers < 8){ 
 		movePrompt += "Soldiers <select id='moveSoldiers'>";
 		for(var i = 0; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
 			movePrompt += "<option>" + i + "</option>";
@@ -310,10 +389,10 @@ function sendArmy(){
 	}
 	var soldiers = $("#moveSoldiers").val();
 	if(captain || soldiers > 0){
-		if(actionType === "move"){
+		if(game.state === "move"){
 			moveArmy(destination, captain, soldiers);
 		}
-		else if(actionType === "battle"){
+		else if(game.state === "battle"){
 			moveIn(destination, captain, soldiers);
 		}
 		
@@ -513,6 +592,14 @@ function randomlyPopulateBoard(){
 		
 	}
 	
+	var teamList = "<div id='teamList'><span>";
+	
+	for(var i = 0; i < armies.length; i++){
+		teamList += " " + armies[i].color + " ";
+	}
+	teamList += "</span></div>";
+	
+	$("#gameInfo").append(teamList);
 };
 
 function highlightAreas(region, action)
@@ -734,10 +821,10 @@ function showArmy(territory){
 	var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-		if(territory.color != "" && actionType === "move"){
+		if(territory.color != "" && game.state === "move"){
 			armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
 		}
-		else if(territory.color != "" && actionType === "battle"){
+		else if(territory.color != "" && game.state === "battle"){
 			armyString += "<span class='showMoves'>SHOTS: " + territory.shots + "</span><br>";
 		}
 		if(territory.captain === true || territory.newCaptain === true){
