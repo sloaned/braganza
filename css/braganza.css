@@ -59,6 +59,8 @@ button{
 	padding: 5px;
 }
 
+
+
 .prompt{
 	border: medium solid black;
 	border-radius: 10px;
@@ -67,6 +69,10 @@ button{
 	position: absolute;
 	text-align: center;
 	width: 150px;
+}
+
+.battle{
+	margin-top: 20px;
 }
 
 .cannon{
@@ -91,7 +97,7 @@ button{
 }
 
 
-.army{
+.army, .battle{
 	position: absolute;
 	z-index: 0;
 }
@@ -482,6 +488,396 @@ button{
 }
 
 #army-water39{
+	left: 93%;
+	top: 89%;
+}
+
+#battle-conomopoint{
+	left: 1%;
+	top: 24.5%;
+}
+
+#battle-northwestterritory{
+	left: 13%;
+	top: 27.5%;
+}
+
+#battle-twopennyloaf{
+	left: 21%;
+	top: 17.5%;
+}
+
+#battle-wingaersheek{
+	left: 28.8%;
+	top: 25.5%;
+}
+
+#battle-redrocks{
+	left: 1.5%;
+	top: 44.5%;
+}
+
+#battle-westparrish{
+	left: 11.5%;
+	top: 39.5%;
+}
+
+#battle-rustisland{
+	left: 20.5%;
+	top: 39.5%;
+}
+
+#battle-mountann{
+	left: 2%;
+	top: 58.5%;
+}
+
+#battle-fernwood{
+	left: 21%;
+	top: 54%;
+}
+
+#battle-coolidgepoint{
+	left: 1.5%;
+	top: 72.5%;
+}
+
+#battle-ravenswood{
+	left: 13%;
+	top: 64%;
+}
+
+#battle-stagefortpark{
+	left: 27%;
+	top: 62%;
+}
+
+#battle-magnolia{
+	left: 10%;
+	top: 77.5%;
+}
+
+#battle-hammondcastle{
+	left: 21%;
+	top: 71%;
+}
+
+#battle-annisquam{
+	left: 48%;
+	top: 21%;
+}
+
+#battle-bayview{
+	left: 54.5%;
+	top: 15.5%;
+}
+
+#battle-lanesville{
+	left: 61%;
+	top: 11%;
+}
+
+#battle-halibutpoint{
+	left: 70%;
+	top: 7.7%;
+}
+
+#battle-pigeonhill{
+	left: 70.5%;
+	top: 20%;
+}
+
+#battle-dogtown{
+	left: 58%;
+	top: 27%;
+}
+
+#battle-riverdale{
+	left: 43.7%;
+	top: 40%;
+}
+
+#battle-wheelerspoint{
+	left: 36.6%;
+	top: 44%;
+}
+
+#battle-blackburnpark{
+	left: 50%;
+	top: 46%;
+}
+
+#battle-raccoonrock{
+	left: 59%;
+	top: 40%;
+}
+
+#battle-pooleshill{
+	left: 66.5%;
+	top: 34.5%;
+}
+
+#battle-bearskinneck{
+	left: 73%;
+	top: 34.5%;
+}
+
+#battle-gaphead{
+	left: 80%;
+	top: 37.5%;
+}
+
+#battle-landsend{
+	left: 79.5%;
+	top: 48%;
+}
+
+#battle-thatcherisland{
+	left: 92%;
+	top: 58.5%;
+}
+
+#battle-capepond{
+	left: 64%;
+	top: 46.5%;
+}
+
+#battle-longbeach{
+	left: 70%;
+	top: 51.5%;
+}
+
+#battle-goodharborbeach{
+	left: 59%;
+	top: 58%;
+}
+
+#battle-portageehill{
+	left: 48.5%;
+	top: 53.7%;
+}
+
+#battle-cityhall{
+	left: 42%;
+	top: 54%;
+}
+
+#battle-thefort{
+	left: 37.5%;
+	top: 57.5%;
+}
+
+#battle-statefishpier{
+	left: 50%;
+	top: 62.5%;
+}
+
+#battle-bassrocks{
+	left: 55%;
+	top: 69.5%;
+}
+
+#battle-rockyneck{
+	left: 49%;
+	top: 72%;
+}
+
+#battle-easternpoint{
+	left: 41%;
+	top: 84%;
+}
+
+#battle-water1{
+	left: 6%;
+	top: 12%;
+}
+
+#battle-water2{
+	left: 13%;
+	top: 1%;
+}
+
+#battle-water3{
+	left: 21%;
+	top: 2%;
+}
+
+#battle-water4{
+	left: 29.5%;
+	top: 4.5%;
+}
+
+#battle-water5{
+	left: 30%;
+	top: 13%;
+}
+
+#battle-water6{
+	left: 46%;
+	top: 6%;
+}
+
+#battle-water7{
+	left: 40%;
+	top: 15%;
+}
+
+#battle-water8{
+	left: 60%;
+	top: 0.5%;
+}
+
+#battle-water9{
+	left: 78%;
+	top: 0.2%;
+}
+
+#battle-water10{
+	left: 84%;
+	top: 1.5%;
+}
+
+#battle-water11{
+	left: 92%;
+	top: 12%;
+}
+
+#battle-water12{
+	left: 83.5%;
+	top: 12%;
+}
+
+#battle-water13{
+	left: 77.5%;
+	top: 17%;
+}
+
+#battle-water14{
+	left: 83%;
+	top: 27%;
+}
+
+#battle-water15{
+	left: 93.5%;
+	top: 32%;
+}
+
+#battle-water16{
+	left: 93.5%;
+	top: 48.5%;
+}
+
+#battle-water17{
+	left: 72.5%;
+	top: 59.5%;
+}
+
+#battle-water18{
+	left: 82%;
+	top: 61.5%;
+}
+
+#battle-water19{
+	left: 88.5%;
+	top: 69%;
+}
+
+#battle-water20{
+	left: 93%;
+	top: 73.5%;
+}
+
+#battle-water21{
+	left: 64%;
+	top: 66.5%;
+}
+
+#battle-water22{
+	left: 68%;
+	top: 78%;
+}
+
+#battle-water23{
+	left: 78.5%;
+	top: 76%;
+}
+
+#battle-water24{
+	left: 77%;
+	top: 89%;
+}
+
+#battle-water25{
+	left: 86%;
+	top: 87%;
+}
+
+#battle-water26{
+	left: 59.5%;
+	top: 75%;
+}
+
+#battle-water27{
+	left: 48%;
+	top: 85.5%;
+}
+
+#battle-water28{
+	left: 59%;
+	top: 91.5%;
+}
+
+#battle-water29{
+	left: 10%;
+	top: 89%;
+}
+
+#battle-water30{
+	left: 17%;
+	top: 87%;
+}
+
+#battle-water31{
+	left: 25%;
+	top: 85.3%;
+}
+
+#battle-water32{
+	left: 29%;
+	top: 79%;
+}
+
+#battle-water33{
+	left: 34%;
+	top: 68%;
+}
+
+#battle-water34{
+	left: 31.5%;
+	top: 56.5%;
+}
+
+#battle-water35{
+	left: 31%;
+	top: 38%;
+}
+
+#battle-water36{
+	left: 1%;
+	top: 1%;
+}
+
+#battle-water37{
+	left: 92.5%;
+	top: 1.5%;
+}
+
+#battle-water38{
+	left: 1.5%;
+	top: 90.5%;
+}
+
+#battle-water39{
 	left: 93%;
 	top: 89%;
 }
