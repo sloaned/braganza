@@ -12,9 +12,8 @@ var reachable = [];
 var reachableNames = [];
 var destination;
 var action = false;
-//var actionType = "battle";
 var inGame = false;
-var game = {state: ""};
+var game = {state: "move"};
 
 $(document).ready(function(){
 	
@@ -57,9 +56,9 @@ $(document).ready(function(){
 							setTimeout(function(){
 								setTimeout(function(){
 									endBattle(region, attackerKills, defenderKills);
-								}, (region.shots * 1300) + 2200);
+								}, (region.shots * 1340) + 2200);
 								defenderKills = battle(highlightedRegion, region.shots);
-							}, (highlightedRegion.shots * 1300) + 900);
+							}, (highlightedRegion.shots * 1340) + 900);
 							
 							attackerKills = battle(reachable[i], highlightedRegion.shots);	
 						}
@@ -121,7 +120,17 @@ $(document).ready(function(){
 		showArmies();
 	});
 	
-
+	$("#changeToMove").click(function(){
+		game.state = "move";
+		$(".army").remove();
+		showArmies();
+	});
+	
+	$("#changeToBattle").click(function(){
+		game.state = "battle";
+		$(".army").remove();
+		showArmies();
+	});
 	/*
 	$('.army').click(function(){
 		//e.preventDefault();
@@ -130,10 +139,10 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	/*placeSerpent();
+	placeSerpent();
 	randomlyPopulateBoard();
 	calculateAllShots();
-	showArmies();*/
+	showArmies();
 
 });
 
@@ -178,7 +187,7 @@ function showBattleResults(region, results){
 				showResult();
 			}
 		
-		}, 1300);
+		}, 1340);
 		
 	};
 	
@@ -591,7 +600,7 @@ function randomlyPopulateBoard(){
 		armies[i].territories[0].captain = true;
 		
 	}
-	
+	/*
 	var teamList = "<div id='teamList'><span>";
 	
 	for(var i = 0; i < armies.length; i++){
@@ -599,7 +608,7 @@ function randomlyPopulateBoard(){
 	}
 	teamList += "</span></div>";
 	
-	$("#gameInfo").append(teamList);
+	$("#gameInfo").append(teamList);*/
 };
 
 function highlightAreas(region, action)
