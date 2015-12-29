@@ -707,7 +707,7 @@ function findReachableAreas(region){
 			
 			if(neighbor.type === "sea" && (neighbor.soldiers < 8 || region.captain === true)){
 				for(var j = 0; j < neighbor.landTravel.length; j++){
-					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1 && neighbor.color === ""){
+					if((neighbor.landTravel[j].color === "" || (neighbor.landTravel[j].color === region.color && (region.captain === true || neighbor.landTravel[j].soldiers+neighbor.landTravel[j].newSoldiers < 8))) && neighbor.landTravel[j] != region && areas.indexOf(neighbor.landTravel[j]) === -1 && neighbor.color === ""){
 						areas.push(neighbor.landTravel[j]);
 					}
 				}
