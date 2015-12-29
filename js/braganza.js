@@ -86,26 +86,36 @@ $(document).ready(function(){
 		game.over = false;
 		var numPlayers = $("#numberOfPlayers").val();
 		var commandPostVals = [];
+		var colorVals = [];
 		for(var i = 0; i < 13; i++){
 			commandPostVals.push(i);
 		}
-		var commandPost;
+		for(var i = 0; i < 6; i++){
+			colorVals.push(i);
+		}
+		var commandPost, color;
 		for(var i = 0; i < numPlayers; i++){
 			game.players.push({});
-			game.players[i].color = colors[i];
+			color = Math.floor(Math.random() * colorVals.length);
+			game.players[i].color = colors[colorVals[color]];
 			commandPost = Math.floor(Math.random() * commandPostVals.length);
 			game.players[i].commandPost = commandPosts[commandPostVals[commandPost]];
-			game.players[i].commandPost.color = colors[i];
+			game.players[i].commandPost.color = game.players[i].color;
 			game.players[i].commandPost.cannons = 1;
 			game.players[i].commandPost.captain = true;
+			colorVals.splice(color, 1);
 			commandPostVals.splice(commandPost, 1);
 		
 			game.players[i].cannons = 3;
 			game.players[i].soldiers = 39;
 			game.players[i].captainImage = getCaptainImage(game.players[i].commandPost.name);
 			
-			$("#gameInfo").append("<span class='captainImage "  + game.players[i].captainImage + "'><div class='tint " + game.players[i].color + "'</span>");
+			$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");	
 		}
+		
+		$("#gameInfo").append("<br style='clear: left;'/>");
+		var width = (140 * numPlayers).toString() + "px";
+		$("#gameInfo").css("width", width);
 		for(var i = 0; i < regions.length; i++){
 			if(regions[i].color !== "" && regions[i].color !== "serpent"){
 				if(regions[i].type === "sea"){
@@ -552,7 +562,7 @@ function randomlyPopulateBoard(){
 	{
 		values.push(i);
 	}
-	var landEach = Math.floor(37/armyNumber);
+	var landEach = Math.floor(30/armyNumber);
 	for(var i = 0; i < armyNumber; i++)
 	{
 		armies.push({});

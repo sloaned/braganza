@@ -482,7 +482,7 @@ water14.landTravel = [bearskinneck, gaphead];
 water14.seaTravel = [water12, water13, water15];
 
 water15.name = "water15";
-water15.attack = [water11, water12, water14, water16];
+water15.attack = [water11, water12, water14, water16, gaphead, landsend];
 water15.landTravel = [gaphead, landsend];
 water15.seaTravel = [water11, water12, water14, water16];
 
