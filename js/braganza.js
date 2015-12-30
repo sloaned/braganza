@@ -67,14 +67,8 @@ $(document).ready(function(){
 				}
 			}
 		}
-		else if(!highlighted && region.color !== "" && game.state !== "pickCommandPosts"){ // player clicks area containing army, highlight it
-			if(game.state === "move"){
-				highlightAreas(region, "move");
-			}
-			else if(game.state === "battle"){
-				highlightAreas(region, "attack");
-			}
-			
+		else if(!highlighted && region.color !== "" && (game.state === "move" || game.state === "battle")){ // player clicks area containing army, highlight it
+			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
 			for(var i = 0; i < commandPosts.length; i++){
@@ -103,20 +97,23 @@ $(document).ready(function(){
 				}
 				if(done){
 					$(".army").remove();
-					game.state = "move";
+					game.state = "setArmies";
 					addNeutralArmies();
 					calculateAllShots();
-					showArmies();
-					
+					showArmies();	
 				}
-				else{
-					game.turn = game.players.length-1;
-				}
-				
+				$("#image-" + game.players[game.turn].color).css("border", "none");
+				game.turn = game.players.length-1;	
+				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 			}
 			else{
+				$("#image-" + game.players[game.turn].color).css("border", "none");
 				game.turn--;
+				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 			}
+		}
+		else if(game.state === "setArmies"){
+			
 		}
 	});
 	
@@ -154,11 +151,11 @@ $(document).ready(function(){
 			game.players[i].soldiers = 39;
 			game.players[i].captainImage = getCaptainImage(game.players[i].commandPost.name);
 			
-			$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");	
+			$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "'><div class='tint tint-" + game.players[i].color + "' id='image-" + game.players[i].color + "'></div></div>");	
 		}
 		
 		$("#gameInfo").append("<br style='clear: left;'/>");
-		var width = (140 * numPlayers).toString() + "px";
+		var width = (160 * numPlayers).toString() + "px";
 		$("#gameInfo").css("width", width);
 		for(var i = 0; i < regions.length; i++){
 			if(regions[i].color !== "" && regions[i].color !== "serpent"){
@@ -173,6 +170,8 @@ $(document).ready(function(){
 		showArmies();
 		game.state = "pickCommandPosts";
 		game.turn = game.players.length-1;
+		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+		
 		
 		
 		
@@ -204,25 +203,6 @@ $(document).ready(function(){
 
 });
 
-function selectCommandPostRound(index){
-	
-	var chosen = false;
-	
-	while(!chosen){
-		$('.mapRegion').click(function(e){
-			e.preventDefault();
-			var region = $(this).attr('id');
-			
-			
-		});
-	}
-	
-	index--;
-	if(index >= 0){
-		selectCommandPostRound(index);
-	}
-		
-}
 
 function addNeutralArmies(){
 	for(var i = 0; i < commandPosts.length; i++){
@@ -714,7 +694,7 @@ function highlightAreas(region, action)
 					if(action === "move"){
 						reachable = findReachableAreas(regions[i]);
 					}
-					else{ // if(action === "attack")
+					else if(action === "battle"){ // if(action === "attack")
 						reachable = findAttackableAreas(regions[i]);
 					}
 				

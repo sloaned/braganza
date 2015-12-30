@@ -2,7 +2,7 @@ html
 {
 	padding: 0;
 	margin: 0;
-	background: #FDEEDD;
+	background: #ffe6cc; /*fdeedd*/
 }
 
 button{
@@ -33,22 +33,28 @@ button{
 
 #gameInfo{
 	margin: 0px auto;
-	height: 200px;
+	height: 220px;
 	margin-top: 25px;
+	/*width: auto*/
 }
 
 .captainImage{
-	height: 200px;
-	width: 117px;
+	height: 220px; /**/
+	width: 137px; /*added 20 to these*/ 
 	display: block;
 	float: left;
 	margin-left: 10px;
 	margin-right: 10px;
 }
+/*
+.turn{
+	border: thick solid black;
+}*/
 
 .tint{
 	overflow: hidden;
-	height: 100%;
+	height: 200px;
+	width: 117px;
 	z-index: 2;
 
 }
@@ -78,55 +84,55 @@ button{
 }
 
 .rogue{
-	background: url("../images/captain-andrew-haraden-the-rogue-annisquam.png") 1%;
+	background: url("../images/captain-andrew-haraden-the-rogue-annisquam.png") no-repeat;
 }
 
 .brave{
-	background: url("../images/captain-chief-masconomet-the-brave-wingaersheek.png") 10%;
+	background: url("../images/captain-chief-masconomet-the-brave-wingaersheek.png") no-repeat;
 }
 
 .skipper{
-	background: url("../images/captain-clayton-morrissey-the-skipper-portageehill.png") 10%;
+	background: url("../images/captain-clayton-morrissey-the-skipper-portageehill.png") no-repeat;
 }
 
 .huntsman{
-	background: url("../images/captain-ebenezer-babson-the-huntsman-bearskinneck.png") 1%;
+	background: url("../images/captain-ebenezer-babson-the-huntsman-bearskinneck.png") no-repeat;
 }
 
 .hatchet{
-	background: url("../images/captain-hannah-jumper-the-hatchet-halibutpoint.png") 100%;
+	background: url("../images/captain-hannah-jumper-the-hatchet-halibutpoint.png") no-repeat;
 }
 
 .oldsalt{
-	background: url("../images/captain-howard-blackburn-the-old-salt-statefishpier.png") 100%;
+	background: url("../images/captain-howard-blackburn-the-old-salt-statefishpier.png") no-repeat;
 }
 
 .inventor{
-	background: url("../images/captain-john-hammond-the-inventor-hammondcastle.png") 100%;
+	background: url("../images/captain-john-hammond-the-inventor-hammondcastle.png") no-repeat;
 }
 
 .cutthroat{
-	background: url("../images/captain-john-phillips-the-cutthroat-thatcherisland.png") 100%;
+	background: url("../images/captain-john-phillips-the-cutthroat-thatcherisland.png") no-repeat;
 }
 
 .patriot{
-	background: url("../images/captain-joseph-foster-the-patriot-thefort.png") 100%;
+	background: url("../images/captain-joseph-foster-the-patriot-thefort.png") no-repeat;
 }
 
 .bard{
-	background: url("../images/captain-judith-sargent-murray-the-bard-cityhall.png") 100%;
+	background: url("../images/captain-judith-sargent-murray-the-bard-cityhall.png") no-repeat;
 }
 
 .freeman{
-	background: url("../images/captain-robin-freeman-the-freeman-stagefortpark.png") 100%;
+	background: url("../images/captain-robin-freeman-the-freeman-stagefortpark.png") no-repeat;
 }
 
 .witch{
-	background: url("../images/captain-thomasine-younger-the-witch-queen-dogtown.png") 100%;
+	background: url("../images/captain-thomasine-younger-the-witch-queen-dogtown.png") no-repeat;
 }
 
 .baron{
-	background: url("../images/captain-thomas-niles-the-baron-easternpoint.png") 100%;
+	background: url("../images/captain-thomas-niles-the-baron-easternpoint.png") no-repeat;
 }
 
 .dice, .armymen{
