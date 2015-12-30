@@ -13,7 +13,7 @@ var reachableNames = [];
 var destination;
 var action = false;
 var inGame = false;
-var game = {state: "move"};
+var game = {state: ""};
 
 $(document).ready(function(){
 	
@@ -56,9 +56,9 @@ $(document).ready(function(){
 							setTimeout(function(){
 								setTimeout(function(){
 									endBattle(region, attackerKills, defenderKills);
-								}, (region.shots * 1340) + 2200);
+								}, (region.shots * 1340) + 2000);
 								defenderKills = battle(highlightedRegion, region.shots);
-							}, (highlightedRegion.shots * 1340) + 900);
+							}, (highlightedRegion.shots * 1340) + 800);
 							
 							attackerKills = battle(reachable[i], highlightedRegion.shots);	
 						}
@@ -67,7 +67,7 @@ $(document).ready(function(){
 				}
 			}
 		}
-		else if(!highlighted && region.color !== ""){ // player clicks area containing army, highlight it
+		else if(!highlighted && region.color !== "" && game.state !== "pickCommandPosts"){ // player clicks area containing army, highlight it
 			if(game.state === "move"){
 				highlightAreas(region, "move");
 			}
@@ -76,14 +76,57 @@ $(document).ready(function(){
 			}
 			
 		}
+		else if(game.state === "pickCommandPosts"){
+			for(var i = 0; i < commandPosts.length; i++){
+				if(commandPosts[i].name === region && commandPosts[i].color === ""){
+					commandPosts[i].color = game.players[game.turn].color;
+					commandPosts[i].flag = true;
+					$("#mapArea").append(showArmy(commandPosts[i]));
+				}
+			}
+			
+			if(game.turn === 0){
+				var done = false;
+				if(game.players.length > 4){
+					done = true;
+				}
+				else{
+					var postsEach = 0;
+					for(var i = 0; i < commandPosts.length; i++){
+						if(commandPosts[i].color === game.players[game.turn].color){
+							postsEach++;
+						}
+					}
+					if(postsEach > 2){
+						done = true;
+					}
+				}
+				if(done){
+					$(".army").remove();
+					game.state = "move";
+					addNeutralArmies();
+					calculateAllShots();
+					showArmies();
+					
+				}
+				else{
+					game.turn = game.players.length-1;
+				}
+				
+			}
+			else{
+				game.turn--;
+			}
+		}
 	});
 	
 	$("#newGame").click(function(e){
 		resetBoard();
 		game = {};
-		game.state = "move";
+		game.state = "setup";
 		game.players = [];
 		game.over = false;
+		game.turn = 0;
 		var numPlayers = $("#numberOfPlayers").val();
 		var commandPostVals = [];
 		var colorVals = [];
@@ -127,9 +170,12 @@ $(document).ready(function(){
 				}
 			}
 		}
-		addNeutralArmies();
-		calculateAllShots();
 		showArmies();
+		game.state = "pickCommandPosts";
+		game.turn = game.players.length-1;
+		
+		
+		
 	});
 	
 	$("#changeToMove").click(function(){
@@ -157,6 +203,26 @@ $(document).ready(function(){
 	showArmies();
 
 });
+
+function selectCommandPostRound(index){
+	
+	var chosen = false;
+	
+	while(!chosen){
+		$('.mapRegion').click(function(e){
+			e.preventDefault();
+			var region = $(this).attr('id');
+			
+			
+		});
+	}
+	
+	index--;
+	if(index >= 0){
+		selectCommandPostRound(index);
+	}
+		
+}
 
 function addNeutralArmies(){
 	for(var i = 0; i < commandPosts.length; i++){
