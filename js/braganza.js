@@ -103,6 +103,7 @@ $(document).ready(function(){
 			game.players[i].commandPost.color = game.players[i].color;
 			game.players[i].commandPost.cannons = 1;
 			game.players[i].commandPost.captain = true;
+			game.players[i].commandPost.flag = true;
 			colorVals.splice(color, 1);
 			commandPostVals.splice(commandPost, 1);
 		
@@ -126,6 +127,7 @@ $(document).ready(function(){
 				}
 			}
 		}
+		addNeutralArmies();
 		calculateAllShots();
 		showArmies();
 	});
@@ -155,6 +157,16 @@ $(document).ready(function(){
 	showArmies();
 
 });
+
+function addNeutralArmies(){
+	for(var i = 0; i < commandPosts.length; i++){
+		if(commandPosts[i].color === ""){
+			commandPosts[i].color = "white";
+			commandPosts[i].soldiers = 4;
+			commandPosts[i].flag = true;
+		}
+	}
+};
 
 
 
@@ -214,11 +226,13 @@ function endBattle(region, attackerKills, defenderKills){
 	var regionTroops = region.soldiers;
 	if(region.captain){ regionTroops++; }
 	if(attackerKills >= regionTroops){
-		region.color = "";
 		region.captain = false;
 		region.soldiers = 0;
 		if(region.type === "sea"){
 			region.cannons = 0;
+		}
+		if(!region.hasOwnProperty('flag')){
+			region.color = "";
 		}
 	}
 	else if(attackerKills > 0){
@@ -840,11 +854,17 @@ function showArmy(territory){
 	var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-		if(territory.color != "" && game.state === "move"){
+		if(territory.color != "" && territory.color !== "white" && (territory.soldiers > 0 || territory.captain) && game.state === "move"){
 			armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
 		}
-		else if(territory.color != "" && game.state === "battle"){
+		else if(territory.color != "" && (territory.soldiers > 0 || territory.captain) && game.state === "battle"){
 			armyString += "<span class='showMoves'>SHOTS: " + territory.shots + "</span><br>";
+		}
+		if(territory.hasOwnProperty('flag') && territory.flag === true){
+			armyString += "<img class='flag " + territory.color + "' src='images/flag-" + territory.color + ".png'>";
+			if(territory.captain === false){
+				armyString += "<br>";
+			}
 		}
 		if(territory.captain === true || territory.newCaptain === true){
 			armyString += "<img class='captain " + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
