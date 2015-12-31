@@ -151,7 +151,7 @@ $(document).ready(function(){
 			game.players[i].soldiers = 39;
 			game.players[i].captainImage = getCaptainImage(game.players[i].commandPost.name);
 			
-			$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "'><div class='tint tint-" + game.players[i].color + "' id='image-" + game.players[i].color + "'></div></div>");	
+			$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");	
 		}
 		
 		$("#gameInfo").append("<br style='clear: left;'/>");

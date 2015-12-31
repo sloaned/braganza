@@ -39,8 +39,8 @@ button{
 }
 
 .captainImage{
-	height: 220px; /**/
-	width: 137px; /*added 20 to these*/ 
+	height: 200px; 
+	width: 117px; 
 	display: block;
 	float: left;
 	margin-left: 10px;
