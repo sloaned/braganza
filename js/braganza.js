@@ -67,7 +67,7 @@ $(document).ready(function(){
 				}
 			}
 		}
-		else if(!highlighted && region.color !== "" && (game.state === "move" || game.state === "battle")){ // player clicks area containing army, highlight it
+		else if(!highlighted && region.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
@@ -76,46 +76,54 @@ $(document).ready(function(){
 					commandPosts[i].color = game.players[game.turn].color;
 					commandPosts[i].flag = true;
 					$("#mapArea").append(showArmy(commandPosts[i]));
+					
+					
+					
+					
+					if(game.turn === 0){
+						var done = false;
+						if(game.players.length > 4){
+							done = true;
+						}
+						else{
+							var postsEach = 0;
+							for(var i = 0; i < commandPosts.length; i++){
+								if(commandPosts[i].color === game.players[game.turn].color){
+									postsEach++;
+								}
+							}
+							if(postsEach > 2){
+								done = true;
+							}
+						}
+						if(done){
+							$(".army").remove();
+							game.state = "armCommandPosts";
+							addNeutralArmies();
+							calculateAllShots();
+							showArmies();	
+						}
+						$("#image-" + game.players[game.turn].color).css("border", "none");
+						game.turn = game.players.length-1;	
+						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+					}
+					else{
+						$("#image-" + game.players[game.turn].color).css("border", "none");
+						game.turn--;
+						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+					}
+					
+					break;
 				}
 			}
 			
-			if(game.turn === 0){
-				var done = false;
-				if(game.players.length > 4){
-					done = true;
-				}
-				else{
-					var postsEach = 0;
-					for(var i = 0; i < commandPosts.length; i++){
-						if(commandPosts[i].color === game.players[game.turn].color){
-							postsEach++;
-						}
-					}
-					if(postsEach > 2){
-						done = true;
-					}
-				}
-				if(done){
-					$(".army").remove();
-					game.state = "armCommandPosts";
-					addNeutralArmies();
-					calculateAllShots();
-					showArmies();	
-				}
-				$("#image-" + game.players[game.turn].color).css("border", "none");
-				game.turn = game.players.length-1;	
-				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-			}
-			else{
-				$("#image-" + game.players[game.turn].color).css("border", "none");
-				game.turn--;
-				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-			}
+			
 		}
-		else if(game.state === "armCommandPosts"){
+		else if(game.state === "armCommandPosts" && !action){
 			for(var i = 0; i < commandPosts.length; i++){
 				if(commandPosts[i].color === game.players[game.turn].color && region === commandPosts[i].name){
 					if(commandPosts[i].soldiers < 8 && game.players[game.turn].soldiers > 24){
+						action = true;
 						var addPrompt = "<div class='prompt'><span>You have " + (game.players[game.turn].soldiers - 24)  + " soldiers left to place.</span><br>";
 						addPrompt += "<select id='armPost'>";
 						for(var j = 0; j+commandPosts[i].soldiers <= 8 && (game.players[game.turn].soldiers - j) >= 24; j++){
@@ -249,6 +257,7 @@ function removePrompt(){
 	$('.'+ destination.name).remove();
 	$("#mapArea").append(showArmy(destination));
 	$('#army-'+ destination.name).css("z-index", 0);
+	action = false;
 	
 };
 
