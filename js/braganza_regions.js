@@ -606,39 +606,6 @@ water39.attack = [water20, water25];
 water39.landTravel = [];
 water39.seaTravel = [water20, water25];
 
-/*function getCaptainImage(commandPost){
-	switch(commandPost){
-		case "annisquam":
-			return "images/captain-andrew-haraden-the-rogue-annisquam.png";
-		case "wingaersheek":
-			return "images/captain-chief-masconomet-the-brave-wingaersheek.png";
-		case "portageehill":
-			return "images/captain-clayton-morrissey-the-skipper-portageehill.png";
-		case "bearskinneck":
-			return "images/captain-ebenezer-babson-the-huntsman-bearskinneck.png";
-		case "halibutpoint":
-			return "images/captain-hannah-jumper-the-hatchet-halibutpoint.png";
-		case "statefishpier":
-			return "images/captain-howard-blackburn-the-old-salt-statefishpier.png";
-		case "hammondcastle":
-			return "images/captain-john-hammond-the-inventor-hammondcastle.png";
-		case "thatcherisland":
-			return "images/captain-john-phillips-the-cutthroat-thatcherisland.png";
-		case "thefort":
-			return "images/captain-joseph-foster-the-patriot-thefort.png";
-		case "cityhall":
-			return "images/captain-judith-sargent-murray-the-bard-cityhall.png";
-		case "stagefortpark":
-			return "images/captain-robin-freeman-the-freeman-stagefortpark.png";
-		case "dogtown":
-			return "images/captain-thomasine-younger-the-witch-queen-dogtown.png";
-		case "easternpoint":
-			return "images/captain-thomas-niles-the-baron-easternpoint.png";
-		default:
-			break;
-		
-	}
-}*/
 
 function getCaptainImage(commandPost){
 	switch(commandPost){

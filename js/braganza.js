@@ -17,23 +17,10 @@ var game = {state: ""};
 
 $(document).ready(function(){
 	
-	/*var currentMousePos = { x: -1, y: -1 };
-	$('#gameboard').click(function(event){
-		currentMousePos.x = event.pageX;
-		currentMousePos.y = event.pageY;
-		alert(currentMousePos.x + ", " + currentMousePos.y);
-	});*/
 	setMaphilightDefaults();
 	 
 	$('img[usemap]').maphilight();
 	$('map').imageMapResize();
-	
-	/*var redDice = rollDice(5, "red");
-	var whiteDice = rollDice(5, "white");
-	diceAudio.play();
-	$("#mapArea").append(redDice);
-	$("#mapArea").append(whiteDice);*/
-	
 	
 	$('.mapRegion').click(function(e){
 		e.preventDefault();
@@ -62,6 +49,7 @@ $(document).ready(function(){
 							
 							attackerKills = battle(reachable[i], highlightedRegion.shots);	
 						}
+						break;
 											
 					}
 				}
@@ -130,8 +118,6 @@ $(document).ready(function(){
 							addPrompt += "<option>" + j + "</option>";
 						}
 						addPrompt += "</select><button onclick='armPost()'>Add soldiers</button><button onclick='removePrompt()'>Cancel</button></div>";
-						//$("." + commandPost[i].name).remove();
-						//$("#mapArea").append(showArmy(highlightedRegion));
 						destination = commandPosts[i];
 						$('#army-'+ commandPosts[i].name).css("z-index", 1);
 						$('#army-'+ commandPosts[i].name).append(addPrompt);
@@ -139,6 +125,42 @@ $(document).ready(function(){
 					break;
 				}
 			}
+		}
+		else if(game.state === "stageReinforcements"){
+			console.log("action = " + action);
+			var cannonMove = false;
+			for(var i = 0; i < regions.length; i++){
+				if(regions[i].name === region){
+					destination = regions[i];
+					if(regions[i].color === game.players[game.turn].color && regions[i].cannons < 2){
+						var addCannonPrompt = "<div class='prompt'><span>Add a cannon here?</span><br>";
+						addCannonPrompt += "<button onclick='addCannon()'>Do it</button><button onclick='dontAddCannon()'>Cancel</button>";
+						
+						$('#army-'+ region).css("z-index", 1);
+						$('#army-'+ region).append(addCannonPrompt);
+						cannonMove = true;
+						
+					}	
+					break;
+				}
+			}
+			
+			
+			if(!cannonMove){
+				for(var i = 0; i < stagingAreas.length; i++){
+					if(stagingAreas[i].name === region && stagingAreas[i].color === "" && !action){
+						action = true;
+						stagingAreas[i].color = game.players[game.turn].color;
+						stagingAreas[i].soldiers = 8;
+						game.players[i].soldiers -= 8;
+						$("#army-" + region).remove();
+						$("#mapArea").append(showArmy(stagingAreas[i]));
+						break;
+					}
+				}
+			}
+			
+			
 		}
 	});
 	
@@ -221,20 +243,16 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	placeSerpent();
-	randomlyPopulateBoard();
-	calculateAllShots();
-	showArmies();
+	//placeSerpent();
+	//randomlyPopulateBoard();
+	//calculateAllShots();
+	//showArmies();
 
 });
 
 function armPost(){
 	var numSoldiers = parseInt($("#armPost").val());
-	console.log("numSoldiers = " + numSoldiers);
-	console.log(destination);
-	console.log(destination.soldiers);
 	destination.soldiers += numSoldiers;
-	console.log(destination.soldiers);
 	game.players[game.turn].soldiers -= numSoldiers;
 	if(game.players[game.turn].soldiers === 24){
 		if((game.turn) === 0){
@@ -728,15 +746,6 @@ function randomlyPopulateBoard(){
 		armies[i].territories[0].captain = true;
 		
 	}
-	/*
-	var teamList = "<div id='teamList'><span>";
-	
-	for(var i = 0; i < armies.length; i++){
-		teamList += " " + armies[i].color + " ";
-	}
-	teamList += "</span></div>";
-	
-	$("#gameInfo").append(teamList);*/
 };
 
 function highlightAreas(region, action)
