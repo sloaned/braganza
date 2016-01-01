@@ -1020,7 +1020,9 @@ function calculateAllMoves(){
 
 function calculateAllShots(){
 	for(var i = 0; i < regions.length; i++){
-		calculateShots(regions[i]);
+		if(regions[i].captain || region. soldiers > 0){
+			calculateShots(regions[i]);
+		}
 	}
 };
 
@@ -1073,7 +1075,7 @@ function showArmy(territory){
 				armyString += "<br>";
 			}
 		}
-		if(territory.captain === true || territory.newCaptain === true){
+		if(territory.captain || territory.newCaptain){
 			armyString += "<img class='captain " + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
 		}
 		for(var i = 0; i < territory.soldiers; i++){
