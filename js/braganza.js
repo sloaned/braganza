@@ -3,7 +3,7 @@
 
 var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
 var diceAudio = new Audio('audio/dice-throw-on-gameboard.mp3');
-var diceShake = new Audio('audio/dice-shake.wav');
+var diceShake = new Audio('audio/dice-shake.mp3');
 var musket = new Audio('audio/bullets2.mp3');
 var ricochet = new Audio('audio/ricochet.mp3');
 var highlighted = false;
@@ -400,36 +400,45 @@ function resetBoard(){
 	
 function showBattleResults(region, results){
 	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
-	var i = 0; 
-	function showResult(){
-		setTimeout(function(){
-			if(i === 2){
-				$("#dice-" + region.name).append("<br>");
-			}
-			if(region === highlightedRegion){
-				$("#dice-" + region.name).append("<img class='die' src='images/white-die" + results[i] + ".png'>");
-			}
-			else{
-				$("#dice-" + region.name).append("<img class='die' src='images/red-die" + results[i] + ".png'>");
-			}
-			if(results[i]%2 === 0){
-				musket.play();
-				$("#battle-" + region.name).append("<img src='images/explosion.png'>");
-			}
-			else{
-				ricochet.play();
-				$("#battle-" + region.name).append("<img src='images/miss.png'>");
-			}
-			i++;
-			if(i < results.length){
-				showResult();
-			}
+	var result;
+	setTimeout(function(){
+		diceShake.play();
+		var i = 0; 
+		function showResult(){
+			setTimeout(function(){
+				if(i === 2){
+					$("#dice-" + region.name).append("<br>");
+				}
+				if(region === highlightedRegion){
+					$("#dice-" + region.name).append("<img class='die' src='images/white-die" + results[i] + ".png'>");
+				}
+				else{
+					$("#dice-" + region.name).append("<img class='die' src='images/red-die" + results[i] + ".png'>");
+				}
+				if(results[i]%2 === 0){
+					musket.play();
+					$("#battle-" + region.name).append("<img src='images/explosion.png'>");
+				}
+				else{
+					ricochet.play();
+					$("#battle-" + region.name).append("<img src='images/miss.png'>");
+				}
+				i++;
+				if(i < results.length){
+					showResult();
+				}
+				else{
+					setTimeout(function(){
+						// wait
+					}, 600);
+				}
+			
+			}, 1340);
+			
+		};
 		
-		}, 1340);
-		
-	};
-	
-	var result = showResult();
+		result = showResult();
+	}, 1400);
 	
 	return result;
 	
