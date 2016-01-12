@@ -13,7 +13,7 @@ var reachableNames = [];
 var destination;
 var action = false;
 var inGame = false;
-var game = {state: ""};
+var game = {state: "battle"};
 
 $(document).ready(function(){
 	
@@ -55,7 +55,7 @@ $(document).ready(function(){
 				}
 			}
 		}
-		else if(!highlighted && region.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
+		else if(!highlighted && /*region.color === game.players[game.turn].color && */(game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
@@ -244,9 +244,9 @@ $(document).ready(function(){
 		console.log(region);
 	});*/
 	//placeSerpent();
-	//randomlyPopulateBoard();
-	//calculateAllShots();
-	//showArmies();
+	randomlyPopulateBoard();
+	calculateAllShots();
+	showArmies();
 
 });
 
@@ -314,11 +314,20 @@ function resetBoard(){
 
 	
 function showBattleResults(region, results){
-		
+	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
 	var i = 0; 
 	function showResult(){
 		setTimeout(function(){
-			if(results[i] === 1){
+			if(i === 2){
+				$("#dice-" + region.name).append("<br>");
+			}
+			if(region === highlightedRegion){
+				$("#dice-" + region.name).append("<img class='die' src='images/white-die" + results[i] + ".png'>");
+			}
+			else{
+				$("#dice-" + region.name).append("<img class='die' src='images/red-die" + results[i] + ".png'>");
+			}
+			if(results[i]%2 === 0){
 				musket.play();
 				$("#battle-" + region.name).append("<img src='images/explosion.png'>");
 			}
@@ -344,10 +353,12 @@ function showBattleResults(region, results){
 		
 		
 function endBattle(region, attackerKills, defenderKills){
-
+	console.log("battle ended");
+	
 	var regionTroops = region.soldiers;
 	if(region.captain){ regionTroops++; }
 	if(attackerKills >= regionTroops){
+		console.log("victory!");
 		region.captain = false;
 		region.soldiers = 0;
 		if(region.type === "sea"){
@@ -358,6 +369,7 @@ function endBattle(region, attackerKills, defenderKills){
 		}
 	}
 	else if(attackerKills > 0){
+		console.log("no victory, attackerKills = " + attackerKills + ", region.soldiers = " + region.soldiers);
 		var defendingSoldiers = region.soldiers;
 		for(var i = 0; i < defendingSoldiers && i < attackerKills; i++){
 			region.soldiers--;
@@ -381,8 +393,9 @@ function endBattle(region, attackerKills, defenderKills){
 		}
 	}
 	
-	if(region.type === "land" && region.color === "" && highlightedRegion.color !== "" && highlightedRegion.landTravel.indexOf(region) !== -1){
+	if(region.type === "land" && (!region.captain && region.soldiers === 0) && highlightedRegion.color !== "" && highlightedRegion.landTravel.indexOf(region) !== -1){
 		//attacker won, can move troops in
+		console.log("victory move!");
 		victoryMove(region);
 	}
 	else{
@@ -486,15 +499,13 @@ function battle(region, shots, callback){
 	$("#mapArea").append(battleResults);	
 	var kills = 0;
 	var results = [];
+	var die;
 	for(var i = 0; i < shots; i++){
-		if((Math.ceil(Math.random() * 6))%2 === 0) {
+		die = Math.ceil(Math.random() * 6);
+		results.push(die);
+		if(die%2 === 0) {
 			//kill
-			results.push(1);
 			kills++;
-		}
-		else{
-			//miss
-			results.push(0);
 		}
 	}
 	showBattleResults(region, results);

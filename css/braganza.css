@@ -31,6 +31,92 @@ button{
 	position: relative;
 }
 
+
+.dice, .armymen{
+	text-align: center;
+}
+
+.dice{
+	z-index: 1;
+}
+
+.armymen{
+	z-index: -1;
+}
+
+.die{
+	width: 26px;
+	height: auto;
+}
+
+#redDice{
+	position: absolute;
+	top: 500px;
+	left: 400px;
+}
+
+#whiteDice{
+	position: absolute;
+	top: 500px;
+	left: 800px;
+}
+
+.showMoves{
+	border: thin solid black;
+	border-radius: 5px;
+	background-color: white;
+	text-align: center;
+	padding: 5px;
+}
+
+
+
+.prompt{
+	border: medium solid black;
+	border-radius: 10px;
+	background-color: white;
+	z-index: 1;
+	position: absolute;
+	text-align: center;
+	width: 150px;
+}
+
+.battle{
+	margin-top: 20px;
+}
+
+.flag{
+	height: 35px;
+	width: auto;
+}
+
+.cannon{
+	width: 36px;
+	height: auto;
+}
+
+.soldier{
+	height: 22px; 
+	width: auto;
+}
+
+.captain{
+	height: 36px;
+	width: auto;
+}
+
+.serpent{
+	width: 125px;
+	height: auto;
+	margin-right: 50px;
+}
+
+
+.army, .battle{
+	position: absolute;
+	z-index: 0;
+}
+
 #gameInfo{
 	margin: 0px auto;
 	height: 220px;
@@ -133,83 +219,6 @@ button{
 
 .baron{
 	background: url("../images/captain-thomas-niles-the-baron-easternpoint.png") no-repeat;
-}
-
-.dice, .armymen{
-	text-align: center;
-}
-
-.die{
-	width: 40px;
-	height: auto;
-}
-
-#redDice{
-	position: absolute;
-	top: 500px;
-	left: 400px;
-}
-
-#whiteDice{
-	position: absolute;
-	top: 500px;
-	left: 800px;
-}
-
-.showMoves{
-	border: thin solid black;
-	border-radius: 5px;
-	background-color: white;
-	text-align: center;
-	padding: 5px;
-}
-
-
-
-.prompt{
-	border: medium solid black;
-	border-radius: 10px;
-	background-color: white;
-	z-index: 1;
-	position: absolute;
-	text-align: center;
-	width: 150px;
-}
-
-.battle{
-	margin-top: 20px;
-}
-
-.flag{
-	height: 35px;
-	width: auto;
-}
-
-.cannon{
-	width: 36px;
-	height: auto;
-}
-
-.soldier{
-	height: 22px; 
-	width: auto;
-}
-
-.captain{
-	height: 36px;
-	width: auto;
-}
-
-.serpent{
-	width: 125px;
-	height: auto;
-	margin-right: 50px;
-}
-
-
-.army, .battle{
-	position: absolute;
-	z-index: 0;
 }
 
 #army-conomopoint{
