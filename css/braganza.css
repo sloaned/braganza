@@ -37,7 +37,7 @@ button{
 }
 
 .dice{
-	z-index: 1;
+	z-index: 2;
 }
 
 .armymen{
@@ -67,6 +67,7 @@ button{
 	background-color: white;
 	text-align: center;
 	padding: 5px;
+	z-index: 1;
 }
 
 
