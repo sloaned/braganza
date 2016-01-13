@@ -46,7 +46,7 @@ $(document).ready(function(){
 							setTimeout(function(){
 								setTimeout(function(){
 									endBattle(region, attackerKills, defenderKills);
-								}, (region.shots * 1540) + 2000);
+								}, (region.shots * 1540) + 3500);
 								defenderKills = battle(highlightedRegion, region.shots);
 							}, (highlightedRegion.shots * 1540) + 800);   // 1340
 							
@@ -361,7 +361,7 @@ function removePrompt(){
 	
 };
 
-
+/* add neutral armies to any unoccupied command posts */
 function addNeutralArmies(){
 	for(var i = 0; i < commandPosts.length; i++){
 		if(commandPosts[i].color === ""){
@@ -373,7 +373,7 @@ function addNeutralArmies(){
 };
 
 
-
+/* remove everything from board */
 function resetBoard(){
 	for(var i = 0; i < regions.length; i++)
 	{
@@ -394,7 +394,7 @@ function resetBoard(){
 }
 
 
-	
+/* show the dice and hits/misses of a battle */
 function showBattleResults(region, results){
 	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
 	var result;
@@ -420,6 +420,7 @@ function showBattleResults(region, results){
 					ricochet.play();
 					$("#battle-" + region.name).append("<img src='images/miss.png'>");
 				}
+				
 				i++;
 				if(i < results.length){
 					showResult();
@@ -437,7 +438,7 @@ function showBattleResults(region, results){
 	
 };
 		
-		
+/* remove killed troops from the board */		
 function endBattle(region, attackerKills, defenderKills){
 
 	var regionTroops = region.soldiers;
@@ -493,6 +494,7 @@ function endBattle(region, attackerKills, defenderKills){
 	
 };
 
+/* show prompt allowing player to move soldiers into captured territory */
 function victoryMove(region){
 	destination = region;
 	var movePrompt = "<div class='prompt'><span>Victory!</span><br><span>Move troops?</span><br>";
@@ -519,6 +521,7 @@ function victoryMove(region){
 	$('#army-'+ highlightedRegion.name).append(movePrompt);
 };
 
+/* move soldiers into captured territory */
 function moveIn(region, captain, soldiers){
 	if(captain === true){	
 		highlightedRegion.captain = false;
@@ -537,7 +540,6 @@ function moveIn(region, captain, soldiers){
 	
 	region.color = highlightedRegion.color;
 
-	
 	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){	
 		highlightedRegion.color = "";
 	}
@@ -553,6 +555,7 @@ function moveIn(region, captain, soldiers){
 	
 };
 
+/* return to normal view after battle is over */
 function resetBoardAfterBattle(){
 	calculateShots(highlightedRegion);
 	calculateShots(destination);
