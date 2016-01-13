@@ -13,7 +13,7 @@ var reachableNames = [];
 var destination;
 var action = false;
 var inGame = false;
-var game = {state: "battle", turn: 0};
+var game = {state: "serpentMove", turn: 0};
 
 $(document).ready(function(){
 	
@@ -39,6 +39,9 @@ $(document).ready(function(){
 						action = true;
 						if(game.state === "move"){
 							movePrompt(reachable[i]);
+						}
+						else if(game.state === "serpentMove"){
+							moveSerpent(regionObj, reachable[i]);
 						}
 						else if(game.state === "battle"){
 							var region = reachable[i];
@@ -70,7 +73,7 @@ $(document).ready(function(){
 			}
 		}
 
-		else if(!highlighted && regionObj.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
+		else if(!highlighted /*&& regionObj.color === game.players[game.turn].color */&& (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
@@ -304,8 +307,8 @@ $(document).ready(function(){
 	});*/
 	placeSerpent();
 	/*randomlyPopulateBoard();
-	calculateAllShots();
-	showArmies();*/
+	calculateAllShots();*/
+	showArmies();
 
 });
 
@@ -456,6 +459,10 @@ function showBattleResults(region, results){
 	
 	
 };
+
+function moveSerpent(region, destination){ // both objects
+	
+}
 
 function useSerpent(color, moves){
 	game.serpentTurn = 0;
@@ -936,35 +943,48 @@ function highlightAreas(region, action)
 }
 
 // currently only written for up to two moves
-function findSerpentReachableAreas(region){   // can the sea serpent move through occupied territories? (currently no)
-	var areas = [];
+function findSerpentReachableAreas(region, areasAndNeighbors){  // either 2 or 4
+	var areas = areasAndNeighbors[0];
 	var neighbors = [];
-	
-	if(region.moves > 0){
-		for(var i = 0; i < region.seaTravel.length; i++){
-			if(region.seaTravel[i].color === ""){
+	var newNeighbors = [];
+	for(var i = 0; i < region.seaTravel.length; i++){
+		if(region.seaTravel[i].color === ""){
+			if(areas.indexOf(region.seaTravel[i]) === -1){
 				areas.push(region.seaTravel[i]);
 				neighbors.push(region.seaTravel[i]);
 			}
 		}
 	}
-	if(region.moves === 2){
-		for(var i = 0; i < neighbors.length; i++){
+	
+	
+	for(var i = 0; i < neighbors.length; i++){
 		
-			var neighbor = neighbors[i];
-			for(var j = 0; j < neighbor.seaTravel.length; j++){
-				if(neighbor.seaTravel[j].color === "" && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
-					areas.push(neighbor.seaTravel[j]);
-				}
+		var neighbor = neighbors[i];
+		for(var j = 0; j < neighbor.seaTravel.length; j++){
+			if(neighbor.seaTravel[j].color === "" && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
+				areas.push(neighbor.seaTravel[j]);
+				newNeighbors.push(neighbor.seaTravel[j]);
 			}
 		}
 	}
-	return areas;
+	return [areas, newNeighbors];
+	
 };
 
 function findReachableAreas(region){
 	if(region.color === "serpent"){
-		return findSerpentReachableAreas(region);
+		var areasAndNeighbors = [[], []];
+	
+		areasAndNeighbors = findSerpentReachableAreas(region, areasAndNeighbors);
+		if(region.moves === 4){
+			var neighbors = areasAndNeighbors[1];
+			for(var i = 0; i < neighbors.length; i++){
+				areasAndNeighbors = findSerpentReachableAreas(neighbors[i], areasAndNeighbors);
+				console.log(areasAndNeighbors[0]);
+			}
+		}
+		console.log(areasAndNeighbors[0]);
+		return areasAndNeighbors[0];
 	}
 	
 	var areas = [];
@@ -1184,4 +1204,5 @@ function placeSerpent(){
 	var corners = [water36, water37, water38, water39];
 	var cornerNumber = Math.floor(Math.random() * 4);
 	corners[cornerNumber].color = "serpent";
+	corners[cornerNumber].moves = 4;
 };
