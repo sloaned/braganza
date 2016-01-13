@@ -46,9 +46,9 @@ $(document).ready(function(){
 							setTimeout(function(){
 								setTimeout(function(){
 									endBattle(region, attackerKills, defenderKills);
-								}, (region.shots * 1340) + 2000);
+								}, (region.shots * 1540) + 2000);
 								defenderKills = battle(highlightedRegion, region.shots);
-							}, (highlightedRegion.shots * 1340) + 800);
+							}, (highlightedRegion.shots * 1540) + 800);   // 1340
 							
 							attackerKills = battle(reachable[i], highlightedRegion.shots);	
 						}
@@ -262,9 +262,6 @@ $(document).ready(function(){
 		game.turn = 0;
 		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 		
-		
-		
-		
 	});
 	
 	$("#changeToMove").click(function(){
@@ -427,11 +424,6 @@ function showBattleResults(region, results){
 				if(i < results.length){
 					showResult();
 				}
-				else{
-					setTimeout(function(){
-						// wait
-					}, 600);
-				}
 			
 			}, 1340);
 			
@@ -447,12 +439,10 @@ function showBattleResults(region, results){
 		
 		
 function endBattle(region, attackerKills, defenderKills){
-	console.log("battle ended");
-	
+
 	var regionTroops = region.soldiers;
 	if(region.captain){ regionTroops++; }
 	if(attackerKills >= regionTroops){
-		console.log("victory!");
 		region.captain = false;
 		region.soldiers = 0;
 		if(region.type === "sea"){
@@ -463,7 +453,6 @@ function endBattle(region, attackerKills, defenderKills){
 		}
 	}
 	else if(attackerKills > 0){
-		console.log("no victory, attackerKills = " + attackerKills + ", region.soldiers = " + region.soldiers);
 		var defendingSoldiers = region.soldiers;
 		for(var i = 0; i < defendingSoldiers && i < attackerKills; i++){
 			region.soldiers--;
@@ -489,7 +478,6 @@ function endBattle(region, attackerKills, defenderKills){
 	
 	if(region.type === "land" && (!region.captain && region.soldiers === 0) && highlightedRegion.color !== "" && highlightedRegion.landTravel.indexOf(region) !== -1){
 		//attacker won, can move troops in
-		console.log("victory move!");
 		victoryMove(region);
 	}
 	else{
@@ -606,8 +594,6 @@ function battle(region, shots, callback){
 	
 	return kills;
 	
-	
-	//callback();
 }
 
 
@@ -856,7 +842,6 @@ function randomlyPopulateBoard(){
 function highlightAreas(region, action)
 {
 		if(!highlighted){	
-			console.log("made it into highlightAreas!");
 			for(var i = 0; i < regions.length; i++){
 				if(regions[i].name === region && regions[i].color != ""){
 					highlighted = true;
