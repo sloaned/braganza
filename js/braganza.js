@@ -26,7 +26,9 @@ $(document).ready(function(){
 		e.preventDefault();
 		var region = $(this).attr('id');
 		var regionObj = eval(region);
-
+		console.log("region color = " + regionObj.color);
+		console.log("highlighted = " + highlighted);
+		console.log("game.state = " + game.state);
 		if(highlighted && region === highlightedRegionName && !action){  // player reclicks highlighted area, cancel highlight
 			clearHighlight();
 		}
@@ -68,7 +70,7 @@ $(document).ready(function(){
 			}
 		}
 
-		else if(!highlighted && /*regionObj.color === game.players[game.turn].color && */(game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
+		else if(!highlighted && regionObj.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
@@ -127,7 +129,7 @@ $(document).ready(function(){
 						action = true;
 						var addPrompt = "<div class='prompt'><span>You have " + (game.players[game.turn].soldiers - 24)  + " soldiers left to place.</span><br>";
 						addPrompt += "<select id='armPost'>";
-						for(var j = 0; j+commandPosts[i].soldiers <= 8 && (game.players[game.turn].soldiers - j) >= 24; j++){
+						for(var j = 1; j+commandPosts[i].soldiers <= 8 && (game.players[game.turn].soldiers - j) >= 24; j++){
 							addPrompt += "<option>" + j + "</option>";
 						}
 						addPrompt += "</select><button onclick='armPost()'>Add soldiers</button><button onclick='removePrompt()'>Cancel</button></div>";
@@ -211,6 +213,10 @@ $(document).ready(function(){
 			
 			
 		}
+		else if(game.state === "serpentMove" && regionObj.color === "serpent" && !highlighted){
+			console.log("hit the right controller");
+			highlightAreas(region, "move");
+		}
 	});
 	
 	$("#newGame").click(function(e){
@@ -222,6 +228,8 @@ $(document).ready(function(){
 		game.turn = 0;
 		game.boats = 13;
 		game.reinforcementsAction = {cannon: false, soldiers: false};
+		game.serpentTurn = 0;
+		game.action = false;
 		var numPlayers = $("#numberOfPlayers").val();
 		var commandPostVals = [];
 		var colorVals = [];
@@ -270,6 +278,7 @@ $(document).ready(function(){
 		game.state = "pickCommandPosts";
 		game.turn = 0;
 		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+		placeSerpent();
 		
 	});
 	
@@ -282,6 +291,7 @@ $(document).ready(function(){
 	$("#changeToBattle").click(function(){
 		game.state = "battle";
 		$(".army").remove();
+		calculateAllShots();
 		showArmies();
 	});
 	/*
@@ -293,9 +303,9 @@ $(document).ready(function(){
 		console.log(region);
 	});*/
 	placeSerpent();
-	randomlyPopulateBoard();
+	/*randomlyPopulateBoard();
 	calculateAllShots();
-	showArmies();
+	showArmies();*/
 
 });
 
@@ -421,7 +431,7 @@ function showBattleResults(region, results){
 				else{
 					$("#dice-" + region.name).append("<img class='die' src='images/red-die" + results[i] + ".png'>");
 				}
-				if(results[i]%2 === 0){
+				if(results[i]%2 === 1){
 					musket.play();
 					$("#battle-" + region.name).append("<img src='images/explosion.png'>");
 				}
@@ -446,10 +456,32 @@ function showBattleResults(region, results){
 	
 	
 };
-		
-/* remove killed troops from the board */		
-function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves){
 
+function useSerpent(color, moves){
+	game.serpentTurn = 0;
+	for(var i = 39; i < regions.length; i++){
+		if(regions[i].color === "serpent"){
+			regions[i].moves = moves*2;
+		}
+	}
+	
+	for(var i = 0; i < game.players.length; i++){
+		if(game.players[i].color === color){
+			game.serpentTurn = i;
+		}
+	}
+	$("#image-" + game.players[game.turn].color).css("border", "none");
+	$("#image-" + game.players[game.serpentTurn].color).css("border", "thick solid black");
+	console.log("control the serpent");
+	game.state = "serpentMove";
+	
+};
+		
+/* remove dead troops from the board */		
+function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves){
+	var attackerColor = highlightedRegion.color;
+	var defenderColor = region.color;
+	
 	var regionTroops = region.soldiers;
 	if(region.captain){ regionTroops++; }
 	if(attackerKills >= regionTroops){
@@ -499,7 +531,16 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		$("#mapArea").append(showArmy(highlightedRegion));
 		action = false;
 		clearHighlight();
+		if(attackerSerpentMoves > defenderSerpentMoves){
+			useSerpent(highlightedRegion.color, attackerSerpentMoves-defenderSerpentMoves);
+		}
+		else if(defenderSerpentMoves > attackerSerpentMoves){
+			useSerpent(region.color, defenderSerpentMoves-attackerSerpentMoves);
+		}	
 	}
+	
+
+	
 	
 };
 
@@ -512,7 +553,7 @@ function victoryMove(region){
 	}
 	if(highlightedRegion.soldiers > 0){ 
 		movePrompt += "Soldiers <select id='moveSoldiers'>";
-		for(var i = 0; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
+		for(var i = 1; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
 			movePrompt += "<option>" + i + "</option>";
 		}
 		movePrompt += "</select>";
@@ -601,7 +642,7 @@ function battle(region, shots, callback){
 			sixes++;
 		}
 		results.push(die);
-		if(die%2 === 0) {
+		if(die%2 === 1) {
 			//kill
 			kills++;
 		}
@@ -635,7 +676,7 @@ function movePrompt(region){
 	}
 	if(highlightedRegion.soldiers > 0 && region.soldiers < 8){ 
 		movePrompt += "Soldiers <select id='moveSoldiers'>";
-		for(var i = 0; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
+		for(var i = 1; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
 			movePrompt += "<option>" + i + "</option>";
 		}
 		movePrompt += "</select>";
@@ -1087,7 +1128,7 @@ function showArmy(territory){
 	var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-		if(/*territory.color === game.players[game.turn].color && */(territory.soldiers > 0 || territory.captain) && game.state === "move"){
+		if(territory.color === game.players[game.turn].color && (territory.soldiers > 0 || territory.captain) && game.state === "move"){
 			armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
 		}
 		else if(territory.color != "" && (territory.soldiers > 0 || territory.captain) && game.state === "battle"){
