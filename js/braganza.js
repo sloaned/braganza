@@ -26,9 +26,7 @@ $(document).ready(function(){
 		e.preventDefault();
 		var region = $(this).attr('id');
 		var regionObj = eval(region);
-		console.log("region color = " + regionObj.color);
-		console.log("highlighted = " + highlighted);
-		console.log("game.state = " + game.state);
+
 		if(highlighted && region === highlightedRegionName && !action){  // player reclicks highlighted area, cancel highlight
 			clearHighlight();
 		}
@@ -217,7 +215,6 @@ $(document).ready(function(){
 			
 		}
 		else if(game.state === "serpentMove" && regionObj.color === "serpent" && !highlighted){
-			console.log("hit the right controller");
 			highlightAreas(region, "move");
 		}
 	});
@@ -951,8 +948,8 @@ function findSerpentReachableAreas(region, areasAndNeighbors){  // either 2 or 4
 		if(region.seaTravel[i].color === ""){
 			if(areas.indexOf(region.seaTravel[i]) === -1){
 				areas.push(region.seaTravel[i]);
-				neighbors.push(region.seaTravel[i]);
 			}
+			neighbors.push(region.seaTravel[i]);
 		}
 	}
 	
@@ -961,7 +958,7 @@ function findSerpentReachableAreas(region, areasAndNeighbors){  // either 2 or 4
 		
 		var neighbor = neighbors[i];
 		for(var j = 0; j < neighbor.seaTravel.length; j++){
-			if(neighbor.seaTravel[j].color === "" && neighbor.seaTravel[j] != region && areas.indexOf(neighbor.seaTravel[j]) === -1){
+			if(neighbor.seaTravel[j].color === "" && neighbor.seaTravel[j] !== region && areas.indexOf(neighbor.seaTravel[j]) === -1){
 				areas.push(neighbor.seaTravel[j]);
 				newNeighbors.push(neighbor.seaTravel[j]);
 			}
@@ -980,10 +977,8 @@ function findReachableAreas(region){
 			var neighbors = areasAndNeighbors[1];
 			for(var i = 0; i < neighbors.length; i++){
 				areasAndNeighbors = findSerpentReachableAreas(neighbors[i], areasAndNeighbors);
-				console.log(areasAndNeighbors[0]);
 			}
 		}
-		console.log(areasAndNeighbors[0]);
 		return areasAndNeighbors[0];
 	}
 	
