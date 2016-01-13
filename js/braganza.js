@@ -2,7 +2,6 @@
 
 
 var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
-var diceAudio = new Audio('audio/dice-throw-on-gameboard.mp3');
 var diceShake = new Audio('audio/dice-shake.mp3');
 var musket = new Audio('audio/bullets2.mp3');
 var ricochet = new Audio('audio/ricochet.mp3');
@@ -41,16 +40,26 @@ $(document).ready(function(){
 						}
 						else if(game.state === "battle"){
 							var region = reachable[i];
+							var attackBattleResults;
+							var defenseBattleResults;
 							var attackerKills = 0;
 							var defenderKills = 0;
+							var attackerSerpentMoves = 0;
+							var defenderSerpentMoves = 0;
 							setTimeout(function(){
 								setTimeout(function(){
-									endBattle(region, attackerKills, defenderKills);
-								}, (region.shots * 1540) + 3500);
-								defenderKills = battle(highlightedRegion, region.shots);
-							}, (highlightedRegion.shots * 1540) + 800);   // 1340
+									endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves);
+								}, (region.shots * 1500) + 3000);
+								defenseBattleResults = battle(highlightedRegion, region.shots);
+								console.log(defenseBattleResults);
+								defenderKills = defenseBattleResults[0];
+								defenderSerpentMoves = defenseBattleResults[1];
+							}, (highlightedRegion.shots * 1500) + 800);
 							
-							attackerKills = battle(reachable[i], highlightedRegion.shots);	
+							attackBattleResults = battle(reachable[i], highlightedRegion.shots);
+							console.log(attackBattleResults);
+							attackerKills = attackBattleResults[0];
+							attackerSerpentMoves = attackBattleResults[1];
 						}
 						break;
 											
@@ -283,7 +292,7 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	//placeSerpent();
+	placeSerpent();
 	randomlyPopulateBoard();
 	calculateAllShots();
 	showArmies();
@@ -439,7 +448,7 @@ function showBattleResults(region, results){
 };
 		
 /* remove killed troops from the board */		
-function endBattle(region, attackerKills, defenderKills){
+function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves){
 
 	var regionTroops = region.soldiers;
 	if(region.captain){ regionTroops++; }
@@ -583,10 +592,14 @@ function battle(region, shots, callback){
 	var battleResults = "<div class='battle " + region.name + "' id='battle-" + region.name + "'></div>";
 	$("#mapArea").append(battleResults);	
 	var kills = 0;
+	var sixes = 0;
 	var results = [];
 	var die;
 	for(var i = 0; i < shots; i++){
 		die = Math.ceil(Math.random() * 6);
+		if(die === 6){
+			sixes++;
+		}
 		results.push(die);
 		if(die%2 === 0) {
 			//kill
@@ -595,7 +608,8 @@ function battle(region, shots, callback){
 	}
 	showBattleResults(region, results);
 	
-	return kills;
+	var battleResults = [kills, Math.floor(sixes/2)];
+	return battleResults;
 	
 }
 
@@ -683,7 +697,7 @@ function moveArmy(region, captain, soldiers){
 	}
 	
 	// anywhere to unoccupied land
-	else if(region.type === "land" && region.color === ""){ // possibly redundant? wouldn't it be zero already?
+	else if(region.type === "land" && region.color === ""){ // redundant? wouldn't it be zero already?
 		region.moves = 0;
 	}	
 	
