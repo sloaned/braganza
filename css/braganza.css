@@ -73,6 +73,7 @@ button{
 .battle{
 	margin-top: 20px;
 	z-index: 1;
+	text-align: center;
 }
 
 .flag{
@@ -98,7 +99,7 @@ button{
 .serpent{
 	width: 125px;
 	height: auto;
-	margin-right: 50px;
+	padding-right: 50px; /* margin-right*/
 }
 
 
@@ -113,9 +114,17 @@ button{
 	/*width: auto*/
 }
 
+#instructionArea{
+	text-align: center;
+}
+
+#captainImages{
+	text-align: center;
+}
+
 .captainImage{
-	height: 200px; 
-	width: 117px; 
+	height: 210px;
+	width: 125px; 
 	display: block;
 	float: left;
 	margin-left: 10px;

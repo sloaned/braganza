@@ -31,6 +31,7 @@ $(document).ready(function(){
 			clearHighlight();
 		}
 		else if(highlighted && reachableNames.indexOf(region) !== -1){	// player clicks area surrounding highlighted area, take action
+			console.log("clicked a highlighted area, action = " + action + ", state = " + game.state + ", highlightedRegion.color = " + highlightedRegion.color);
 			if(!action){
 				for(var i = 0; i < reachable.length; i++){
 					if(reachable[i].name === region){
@@ -65,6 +66,7 @@ $(document).ready(function(){
 							attackerSerpentMoves = attackBattleResults[1];
 						}
 						else if(game.state === "serpentAttack"){
+							console.log("clicked an area on serpentAttack");
 							var region = reachable[i];
 							var regionSoldiers = region.soldiers;
 							var serpentAttackResults;
@@ -86,7 +88,7 @@ $(document).ready(function(){
 			}
 		}
 
-		else if(!highlighted  && regionObj.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
+		else if(!highlighted  /*&& regionObj.color === game.players[game.turn].color */&& (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
@@ -208,9 +210,9 @@ $(document).ready(function(){
 						// need to do something here to determine whose turn it is
 						if(game.players[game.turn].cannons === 2){ // we've just completed setup
 							game.players.reverse();
-							$("#gameInfo").empty();
+							$("#captainImages").empty();
 							for(var i = 0; i < game.players.length; i++){
-								$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
+								$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
 							}
 						}
 						$("#image-" + game.players[game.turn].color).css("border", "none");
@@ -276,12 +278,12 @@ $(document).ready(function(){
 			game.players[i].reinforcements = 0;
 			game.players[i].captainImage = getCaptainImage(game.players[i].commandPost.name);
 			
-			$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");	
+			$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");	
 		}
 		
-		$("#gameInfo").append("<br style='clear: left;'/>");
+		$("#captainImages").append("<br style='clear: left;'/>");
 		var width = (160 * numPlayers).toString() + "px";
-		$("#gameInfo").css("width", width);
+		$("#captainImages").css("width", width);
 		for(var i = 0; i < regions.length; i++){
 			if(regions[i].color !== "" && regions[i].color !== "serpent"){
 				if(regions[i].type === "sea"){
@@ -320,10 +322,10 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	/*placeSerpent();
+	placeSerpent();
 	randomlyPopulateBoard();
 	calculateAllShots();
-	showArmies();*/
+	showArmies();
 
 });
 
@@ -347,9 +349,9 @@ function addCannon(){
 				// need to do something here to determine whose turn it is
 				if(game.players[game.turn].cannons === 2){ // we've just completed setup
 					game.players.reverse();
-					$("#gameInfo").empty();
+					$("#captainImages").empty();
 					for(var i = 0; i < game.players.length; i++){
-						$("#gameInfo").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
+						$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
 					}
 				}
 				$("#image-" + game.players[game.turn].color).css("border", "none");
@@ -426,13 +428,14 @@ function resetBoard(){
 	for(var i = 0; i < commandPosts.length; i++){
 		commandPosts[i].flag = false;
 	}
-	$("#gameInfo").empty();
+	$("#captainImages").empty();
 	$(".army").remove();
 }
 
 
 /* show the dice and hits/misses of a battle */
 function showBattleResults(region, results){
+	console.log("showing battle results, region = " + region.name + ", results = " + results);
 	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
 	var result;
 	setTimeout(function(){
@@ -442,6 +445,9 @@ function showBattleResults(region, results){
 			setTimeout(function(){
 				if(i === 2 || i === 5){
 					$("#dice-" + region.name).append("<br>");
+				}
+				if(i === 4){
+					$("#battle-" + region.name).append("<br>");
 				}
 				if(region === highlightedRegion){
 					$("#dice-" + region.name).append("<img class='die' src='images/white-die" + results[i] + ".png'>");
@@ -476,6 +482,7 @@ function showBattleResults(region, results){
 };
 
 function serpentAttack(region, shots){
+	console.log("serpent attack, region = " + region.name + ", shots = " + shots);
 	var battleResults = "<div class='battle " + region.name + "' id='battle-" + region.name + "'></div>";
 	$("#mapArea").append(battleResults);	
 	var kills = 0;
@@ -495,6 +502,7 @@ function serpentAttack(region, shots){
 };
 
 function endSerpentAttack(region, kills){
+	console.log("endSerpentAttack, region = " + region.name + ", kills = " + kills);
 	var troops = region.soldiers;
 	if(region.captain){
 		troops++;
@@ -512,20 +520,21 @@ function endSerpentAttack(region, kills){
 	}
 	
 	$('.'+ region.name).remove();
-	showSerpent(region);
+	$("#mapArea").append(showArmy(region));
 	clearHighlight();
 	game.state = "battle";
 };
 
 function moveSerpent(destination){
+	console.log("moveSerpent, destination = " + destination.name);
 	highlightedRegion.color = "";
 	destination.color = "serpent";
 	console.log(destination.name);
 	$('.'+ destination.name).remove();
 	$('.'+ highlightedRegion.name).remove();
-	$("#mapArea").append(showArmy(highlightedRegion));
-	$("#mapArea").append(showArmy(destination));
+	showSerpent(destination);
 	clearHighlight();
+	action = false;
 	game.state = "serpentAttack";
 }
 
@@ -970,7 +979,7 @@ function randomlyPopulateBoard(){
 	}
 };
 
-function highlightAreas(region, action)
+function highlightAreas(region, act)
 {
 		if(!highlighted){	
 			for(var i = 0; i < regions.length; i++){
@@ -978,10 +987,10 @@ function highlightAreas(region, action)
 					highlighted = true;
 					highlightedRegion = regions[i];
 					highlightedRegionName = regions[i].name;
-					if(action === "move"){
+					if(act === "move"){
 						reachable = findReachableAreas(regions[i]);
 					}
-					else if(action === "battle"){
+					else if(act === "battle"){
 						reachable = findAttackableAreas(regions[i]);
 					}
 				
@@ -1004,6 +1013,7 @@ function highlightAreas(region, action)
 				data.fillOpacity = 0.6;
 				$("#" + region).data('maphilight', data).trigger('alwaysOn.maphilight');
 			}
+			console.log("end of highlightAreas, action = " + action);
 			
 		}
 }
@@ -1212,7 +1222,7 @@ function showArmy(territory){
 		var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-		if(territory.color === game.players[game.turn].color && (territory.soldiers > 0 || territory.captain) && game.state === "move"){
+		if(/*territory.color === game.players[game.turn].color && */(territory.soldiers > 0 || territory.captain) && game.state === "move"){
 			armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
 		}
 		else if(territory.color != "" && (territory.soldiers > 0 || territory.captain) && game.state === "battle"){
@@ -1246,7 +1256,6 @@ function showArmy(territory){
 		}
 		armyString += "</div></div>";
 			
-	console.log(armyString);
 	return armyString;
 };
 
