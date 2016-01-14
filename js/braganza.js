@@ -39,7 +39,7 @@ $(document).ready(function(){
 							movePrompt(reachable[i]);
 						}
 						else if(game.state === "serpentMove"){
-							moveSerpent(regionObj, reachable[i]);
+							moveSerpent(reachable[i]);
 						}
 						else if(game.state === "battle"){
 							var region = reachable[i];
@@ -64,6 +64,21 @@ $(document).ready(function(){
 							attackerKills = attackBattleResults[0];
 							attackerSerpentMoves = attackBattleResults[1];
 						}
+						else if(game.state === "serpentAttack"){
+							var region = reachable[i];
+							var regionSoldiers = region.soldiers;
+							var serpentAttackResults;
+							if(region.captain){
+								regionSoldiers++;
+							}
+							var serpentKills = 0;
+							
+							setTimeout(function(){
+								serpentAttackResults = endSerpentAttack(region, serpentKills);
+							}, (regionSoldiers * 1500) + 3000);
+							
+							serpentKills = serpentAttack(region, regionSoldiers);
+						}
 						break;
 											
 					}
@@ -71,7 +86,7 @@ $(document).ready(function(){
 			}
 		}
 
-		else if(!highlighted /*&& regionObj.color === game.players[game.turn].color */&& (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
+		else if(!highlighted  && regionObj.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
@@ -217,6 +232,9 @@ $(document).ready(function(){
 		else if(game.state === "serpentMove" && regionObj.color === "serpent" && !highlighted){
 			highlightAreas(region, "move");
 		}
+		else if(game.state === "serpentAttack" && regionObj.color === "serpent" && !highlighted){
+			highlightAreas(region, "battle");
+		}
 	});
 	
 	$("#newGame").click(function(e){
@@ -302,10 +320,10 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	placeSerpent();
-	/*randomlyPopulateBoard();
-	calculateAllShots();*/
-	showArmies();
+	/*placeSerpent();
+	randomlyPopulateBoard();
+	calculateAllShots();
+	showArmies();*/
 
 });
 
@@ -422,7 +440,7 @@ function showBattleResults(region, results){
 		var i = 0; 
 		function showResult(){
 			setTimeout(function(){
-				if(i === 2){
+				if(i === 2 || i === 5){
 					$("#dice-" + region.name).append("<br>");
 				}
 				if(region === highlightedRegion){
@@ -457,8 +475,58 @@ function showBattleResults(region, results){
 	
 };
 
-function moveSerpent(region, destination){ // both objects
+function serpentAttack(region, shots){
+	var battleResults = "<div class='battle " + region.name + "' id='battle-" + region.name + "'></div>";
+	$("#mapArea").append(battleResults);	
+	var kills = 0;
+	var results = [];
+	var die;
+	for(var i = 0; i < shots; i++){
+		die = Math.ceil(Math.random() * 6);
+		results.push(die);
+		if(die%2 === 1) {
+			//kill
+			kills++;
+		}
+	}
+	showBattleResults(region, results);
 	
+	return kills;
+};
+
+function endSerpentAttack(region, kills){
+	var troops = region.soldiers;
+	if(region.captain){
+		troops++;
+	}
+	if(kills >= troops){
+		region.soldiers = 0;
+		region.captain = false;
+		region.cannons = 0;
+		region.color = "";
+	}
+	else{
+		for(var i = 0; i < kills; i++){
+			region.soldiers--;
+		}
+	}
+	
+	$('.'+ region.name).remove();
+	showSerpent(region);
+	clearHighlight();
+	game.state = "battle";
+};
+
+function moveSerpent(destination){
+	highlightedRegion.color = "";
+	destination.color = "serpent";
+	console.log(destination.name);
+	$('.'+ destination.name).remove();
+	$('.'+ highlightedRegion.name).remove();
+	$("#mapArea").append(showArmy(highlightedRegion));
+	$("#mapArea").append(showArmy(destination));
+	clearHighlight();
+	game.state = "serpentAttack";
 }
 
 function useSerpent(color, moves){
@@ -476,7 +544,8 @@ function useSerpent(color, moves){
 	}
 	$("#image-" + game.players[game.turn].color).css("border", "none");
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "thick solid black");
-	console.log("control the serpent");
+	$(".army").remove();
+	showArmies();
 	game.state = "serpentMove";
 	
 };
@@ -536,10 +605,10 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		action = false;
 		clearHighlight();
 		if(attackerSerpentMoves > defenderSerpentMoves){
-			useSerpent(highlightedRegion.color, attackerSerpentMoves-defenderSerpentMoves);
+			useSerpent(attackerColor, attackerSerpentMoves-defenderSerpentMoves);
 		}
 		else if(defenderSerpentMoves > attackerSerpentMoves){
-			useSerpent(region.color, defenderSerpentMoves-attackerSerpentMoves);
+			useSerpent(defenderColor, defenderSerpentMoves-attackerSerpentMoves);
 		}	
 	}
 	
@@ -632,7 +701,7 @@ function noVictoryMove(){
 };
 
 
-function battle(region, shots, callback){
+function battle(region, shots){ //callback
 
 	var battleResults = "<div class='battle " + region.name + "' id='battle-" + region.name + "'></div>";
 	$("#mapArea").append(battleResults);	
@@ -1140,7 +1209,7 @@ function rollDice(dice, color){
 };
 
 function showArmy(territory){
-	var armyString = "";
+		var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
 		if(territory.color === game.players[game.turn].color && (territory.soldiers > 0 || territory.captain) && game.state === "move"){
@@ -1177,8 +1246,13 @@ function showArmy(territory){
 		}
 		armyString += "</div></div>";
 			
-	
+	console.log(armyString);
 	return armyString;
+};
+
+function showSerpent(region){
+	var serpentString = "<div class='army " + region.name + "' id='army-" + region.name + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
+	$("#mapArea").append(serpentString);
 };
 
 function showArmies(){
@@ -1188,8 +1262,7 @@ function showArmies(){
 			$("#mapArea").append(army);
 		}	
 		else if(regions[i].color === "serpent"){
-			var serpentString = "<div class='army " + regions[i].name + "' id='army-" + regions[i].name + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
-			$("#mapArea").append(serpentString);
+			showSerpent(regions[i]);
 		}
 	}
 	
@@ -1200,4 +1273,5 @@ function placeSerpent(){
 	var cornerNumber = Math.floor(Math.random() * 4);
 	corners[cornerNumber].color = "serpent";
 	corners[cornerNumber].moves = 4;
+	
 };
