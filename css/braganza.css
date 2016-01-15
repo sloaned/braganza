@@ -2,7 +2,10 @@ html
 {
 	padding: 0;
 	margin: 0;
-	background: #ffe6cc; /*fdeedd*/
+}
+
+html, body{
+	background: #F5DCB5;/*#F7E1BC;*/
 }
 
 button{
@@ -111,20 +114,28 @@ button{
 	margin: 0px auto;
 	height: 220px;
 	margin-top: 25px;
-	/*width: auto*/
 }
 
 #instructionArea{
+	height: 220px;
+	line-height: 220px;
 	text-align: center;
 }
 
+#instructions{
+	display: inline-block;
+	vertical-align: middle;
+	line-height: normal;
+}
+
 #captainImages{
+	display: inline-block;
 	text-align: center;
 }
 
 .captainImage{
 	height: 210px;
-	width: 125px; 
+	width: 126px; 
 	display: block;
 	float: left;
 	margin-left: 10px;

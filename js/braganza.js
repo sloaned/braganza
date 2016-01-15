@@ -120,6 +120,7 @@ $(document).ready(function(){
 						if(done){
 							$(".army").remove();
 							game.state = "armCommandPosts";
+							$("#instructions").html("<h2>Setup</h2><h4>Part 2: Arm command posts.</h4>Post 15 soldiers among your command posts. No territory may hold more than 8 soldiers.<br><br>Note: play order will reverse once setup is complete");
 							addNeutralArmies();
 							calculateAllShots();
 							showArmies();	
@@ -282,8 +283,8 @@ $(document).ready(function(){
 		}
 		
 		$("#captainImages").append("<br style='clear: left;'/>");
-		var width = (160 * numPlayers).toString() + "px";
-		$("#captainImages").css("width", width);
+		//var width = (160 * numPlayers).toString() + "px";
+		//$("#captainImages").css("width", width);
 		for(var i = 0; i < regions.length; i++){
 			if(regions[i].color !== "" && regions[i].color !== "serpent"){
 				if(regions[i].type === "sea"){
@@ -296,6 +297,7 @@ $(document).ready(function(){
 		}
 		showArmies();
 		game.state = "pickCommandPosts";
+		$("#instructions").html("<h2>Setup</h2><h4>Part 1: Pick an additional command post</h4>Note: play order will reverse once setup is complete");
 		game.turn = 0;
 		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 		placeSerpent();
@@ -343,6 +345,8 @@ function addCannon(){
 		if(game.players[game.turn].reinforcements === 0){
 			if(game.turn === game.players.length -1 || (game.turn < (game.players.length -1) && game.players[game.turn+1].cannons < 3)){
 				game.state = "move";
+				$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.");
+
 				calculateAllMoves();
 				$(".army").remove();
 				showArmies();
@@ -375,6 +379,8 @@ function armPost(){
 	if(game.players[game.turn].soldiers === 24){
 		if((game.turn) === game.players.length -1){
 			game.state = "stageReinforcements";
+			$("#instructions").html("<h2>Setup</h2><h4>Part 3: Stage reinforcements</h4>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories.<br><br>Note: play order will reverse once setup is complete");
+
 			for(var i = 0; i < game.players.length; i++){
 				game.players[i].reinforcements = 1;
 			}
