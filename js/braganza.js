@@ -205,6 +205,7 @@ $(document).ready(function(){
 				if(game.players[game.turn].reinforcements === 0){
 					if(game.turn === game.players.length -1 || (game.turn < (game.players.length -1) && game.players[game.turn+1].cannons < 3)){
 						game.state = "move";
+						$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 						calculateAllMoves();
 						$(".army").remove();
 						showArmies();
@@ -328,8 +329,28 @@ $(document).ready(function(){
 	randomlyPopulateBoard();
 	calculateAllShots();
 	showArmies();
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
 
 });
+
+function endTurn(){
+	game.state = "move";
+	game.turn++;
+	if(game.turn >= game.players.length){
+		game.turn = 0;
+	}
+	$(".army").remove();
+	showArmies();
+	$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
+};
+
+function moveDone(){
+	game.state = "battle";
+	$(".army").remove();
+	calculateAllShots();
+	showArmies();
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
+};
 
 function addCannon(){
 	destination.cannons++;
@@ -345,7 +366,7 @@ function addCannon(){
 		if(game.players[game.turn].reinforcements === 0){
 			if(game.turn === game.players.length -1 || (game.turn < (game.players.length -1) && game.players[game.turn+1].cannons < 3)){
 				game.state = "move";
-				$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.");
+				$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 
 				calculateAllMoves();
 				$(".army").remove();
@@ -529,6 +550,7 @@ function endSerpentAttack(region, kills){
 	$("#mapArea").append(showArmy(region));
 	clearHighlight();
 	game.state = "battle";
+	$("instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
 };
 
 function moveSerpent(destination){
@@ -542,6 +564,7 @@ function moveSerpent(destination){
 	clearHighlight();
 	action = false;
 	game.state = "serpentAttack";
+	$("instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent'>Done</button>");
 }
 
 function useSerpent(color, moves){
@@ -562,7 +585,18 @@ function useSerpent(color, moves){
 	$(".army").remove();
 	showArmies();
 	game.state = "serpentMove";
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT AWAKENED</h4>" + game.players[game.serpentTurn].color + " team may move the serpent, or click 'Done' to abstain.<br><button onclick='doneMovingSerpent()'>Done</button>");
 	
+};
+
+function doneMovingSerpent(){
+	game.state = "serpentAttack";
+	$("instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent'>Done</button>");
+};
+
+function doneWithSerpent(){
+	game.state = "battle";
+	$("instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
 };
 		
 /* remove dead troops from the board */		
@@ -1228,7 +1262,7 @@ function showArmy(territory){
 		var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
-		if(/*territory.color === game.players[game.turn].color && */(territory.soldiers > 0 || territory.captain) && game.state === "move"){
+		if(territory.color === game.players[game.turn].color && (territory.soldiers > 0 || territory.captain) && game.state === "move"){
 			armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
 		}
 		else if(territory.color != "" && (territory.soldiers > 0 || territory.captain) && game.state === "battle"){
