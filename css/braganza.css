@@ -118,7 +118,7 @@ button{
 
 #instructionArea{
 	height: 220px;
-	line-height: 220px;
+	line-height: 160px; /*220 px; */
 	text-align: center;
 }
 

@@ -31,7 +31,6 @@ $(document).ready(function(){
 			clearHighlight();
 		}
 		else if(highlighted && reachableNames.indexOf(region) !== -1){	// player clicks area surrounding highlighted area, take action
-			console.log("clicked a highlighted area, action = " + action + ", state = " + game.state + ", highlightedRegion.color = " + highlightedRegion.color);
 			if(!action){
 				for(var i = 0; i < reachable.length; i++){
 					if(reachable[i].name === region){
@@ -55,13 +54,13 @@ $(document).ready(function(){
 									endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves);
 								}, (region.shots * 1500) + 3000);
 								defenseBattleResults = battle(highlightedRegion, region.shots);
-								console.log(defenseBattleResults);
+								//console.log(defenseBattleResults);
 								defenderKills = defenseBattleResults[0];
 								defenderSerpentMoves = defenseBattleResults[1];
 							}, (highlightedRegion.shots * 1500) + 800);
 							
 							attackBattleResults = battle(reachable[i], highlightedRegion.shots);
-							console.log(attackBattleResults);
+							//console.log(attackBattleResults);
 							attackerKills = attackBattleResults[0];
 							attackerSerpentMoves = attackBattleResults[1];
 						}
@@ -88,18 +87,15 @@ $(document).ready(function(){
 			}
 		}
 
-		else if(!highlighted  /*&& regionObj.color === game.players[game.turn].color */&& (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
+		else if(!highlighted  && regionObj.color === game.players[game.turn].color && (game.state === "move" || game.state === "battle")){ // player clicks area containing own army, highlight it
 			highlightAreas(region, game.state);	
 		}
 		else if(game.state === "pickCommandPosts"){
 			for(var i = 0; i < commandPosts.length; i++){
 				if(commandPosts[i].name === region && commandPosts[i].color === ""){
 					commandPosts[i].color = game.players[game.turn].color;
-					commandPosts[i].flag = true;
+					commandPosts[i].flag = game.players[game.turn].color;
 					$("#mapArea").append(showArmy(commandPosts[i]));
-					
-					
-					
 					
 					if(game.turn === game.players.length -1){
 						var done = false;
@@ -271,7 +267,7 @@ $(document).ready(function(){
 			game.players[i].commandPost.color = game.players[i].color;
 			game.players[i].commandPost.cannons = 1;
 			game.players[i].commandPost.captain = true;
-			game.players[i].commandPost.flag = true;
+			game.players[i].commandPost.flag = game.players[i].color;
 			colorVals.splice(color, 1);
 			commandPostVals.splice(commandPost, 1);
 		
@@ -325,31 +321,39 @@ $(document).ready(function(){
 		console.log("region = ");
 		console.log(region);
 	});*/
-	placeSerpent();
+	/*placeSerpent();
 	randomlyPopulateBoard();
 	calculateAllShots();
-	showArmies();
-	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
+	showArmies();*/
 
 });
 
 function endTurn(){
 	game.state = "move";
+	calculateAllMoves();
+	$("#image-" + game.players[game.turn].color).css("border", "none");
 	game.turn++;
 	if(game.turn >= game.players.length){
 		game.turn = 0;
 	}
+	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 	$(".army").remove();
 	showArmies();
 	$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 };
 
 function moveDone(){
+	for(var i = 0; i < 40; i++){
+		while(regions[i].newSoldiers > 0){
+			regions[i].soldiers++;
+			regions[i].newSoldiers--;
+		}
+	}
 	game.state = "battle";
 	$(".army").remove();
 	calculateAllShots();
 	showArmies();
-	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn()'>Done</button>");
 };
 
 function addCannon(){
@@ -433,7 +437,7 @@ function addNeutralArmies(){
 		if(commandPosts[i].color === ""){
 			commandPosts[i].color = "white";
 			commandPosts[i].soldiers = 4;
-			commandPosts[i].flag = true;
+			commandPosts[i].flag = "white";
 		}
 	}
 };
@@ -453,7 +457,7 @@ function resetBoard(){
 		regions[i].newCaptain = false;
 	}
 	for(var i = 0; i < commandPosts.length; i++){
-		commandPosts[i].flag = false;
+		commandPosts[i].flag = "";
 	}
 	$("#captainImages").empty();
 	$(".army").remove();
@@ -462,7 +466,7 @@ function resetBoard(){
 
 /* show the dice and hits/misses of a battle */
 function showBattleResults(region, results){
-	console.log("showing battle results, region = " + region.name + ", results = " + results);
+	//console.log("showing battle results, region = " + region.name + ", results = " + results);
 	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
 	var result;
 	setTimeout(function(){
@@ -547,13 +551,17 @@ function endSerpentAttack(region, kills){
 	}
 	
 	$('.'+ region.name).remove();
+	calculateAllShots();
 	$("#mapArea").append(showArmy(region));
 	clearHighlight();
 	game.state = "battle";
-	$("instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
+	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
+	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
 };
 
 function moveSerpent(destination){
+	console.log("serpent moved");
 	console.log("moveSerpent, destination = " + destination.name);
 	highlightedRegion.color = "";
 	destination.color = "serpent";
@@ -564,7 +572,7 @@ function moveSerpent(destination){
 	clearHighlight();
 	action = false;
 	game.state = "serpentAttack";
-	$("instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent'>Done</button>");
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent'>Done</button>");
 }
 
 function useSerpent(color, moves){
@@ -590,17 +598,28 @@ function useSerpent(color, moves){
 };
 
 function doneMovingSerpent(){
+	console.log("done moving serpent");
 	game.state = "serpentAttack";
-	$("instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent'>Done</button>");
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent()'>Done</button>");
 };
 
 function doneWithSerpent(){
 	game.state = "battle";
-	$("instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
+	calculateAllShots();
+	$(".army").remove();
+	showArmies();
+	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
+	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn()'>Done</button>");
 };
 		
 /* remove dead troops from the board */		
 function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves){
+	console.log("highlighted region color = " + highlightedRegion.color);
+	console.log("defender color = " + region.color);
+	console.log("attacker soldiers = " + highlightedRegion.soldiers);
+	console.log("defender soldiers = " + region.soldiers);
+	
 	var attackerColor = highlightedRegion.color;
 	var defenderColor = region.color;
 	
@@ -612,9 +631,8 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		if(region.type === "sea"){
 			region.cannons = 0;
 		}
-		if(!region.hasOwnProperty('flag')){
-			region.color = "";
-		}
+		region.color = "";
+		
 	}
 	else if(attackerKills > 0){
 		var defendingSoldiers = region.soldiers;
@@ -627,6 +645,7 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 	if(highlightedRegion.captain){ attackTroops++; }
 	if(defenderKills >= attackTroops){
 		highlightedRegion.color = "";
+		
 		highlightedRegion.captain = false;
 		highlightedRegion.soldiers = 0;
 		if(highlightedRegion.type === "sea"){
@@ -711,7 +730,9 @@ function moveIn(region, captain, soldiers){
 	}
 	
 	region.color = highlightedRegion.color;
-
+	if(region.hasOwnProperty('flag')){
+		region.flag = highlightedRegion.color;
+	}
 	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){	
 		highlightedRegion.color = "";
 	}
@@ -750,7 +771,7 @@ function noVictoryMove(){
 };
 
 
-function battle(region, shots){ //callback
+function battle(region, shots){
 
 	var battleResults = "<div class='battle " + region.name + "' id='battle-" + region.name + "'></div>";
 	$("#mapArea").append(battleResults);	
@@ -902,11 +923,14 @@ function moveArmy(region, captain, soldiers){
 	}
 	
 	region.color = highlightedRegion.color;
+	if(region.hasOwnProperty('flag')){
+		region.flag = highlightedRegion.color;
+	}
 
 	
 	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
 		highlightedRegion.moves = 0; // redundant?
-		if(highlightedRegion.newSoldiers === 0 && !highlightedRegion.flag){
+		if(highlightedRegion.newSoldiers === 0){
 			highlightedRegion.color = "";
 		}
 	}
@@ -1053,13 +1077,11 @@ function highlightAreas(region, act)
 				data.fillOpacity = 0.6;
 				$("#" + region).data('maphilight', data).trigger('alwaysOn.maphilight');
 			}
-			console.log("end of highlightAreas, action = " + action);
 			
 		}
 }
 
-// currently only written for up to two moves
-function findSerpentReachableAreas(region, areasAndNeighbors){  // either 2 or 4
+function findSerpentReachableAreas(region, areasAndNeighbors){  
 	var areas = areasAndNeighbors[0];
 	var neighbors = [];
 	var newNeighbors = [];
@@ -1103,9 +1125,12 @@ function findReachableAreas(region){
 	
 	var areas = [];
 	var neighbors = [];
+	console.log("region.color = " + region.color);
 	if(region.moves > 0){
 		for(var i = 0; i < region.landTravel.length; i++){
-			if(region.landTravel[i].color === "" || (region.landTravel[i].color === region.color && (region.captain === true || region.landTravel[i].soldiers < 8))){
+			console.log("region.landTravel[i].soldiers = " + region.landTravel[i].soldiers + ", region.landTravel[i].color = " + region.landTravel[i].color);
+			
+			if(region.landTravel[i].color === "" || (region.landTravel[i].color === region.color && (region.captain === true || region.landTravel[i].soldiers + region.landTravel[i].newSoldiers < 8))){
 				areas.push(region.landTravel[i]);
 			}
 		}
@@ -1268,8 +1293,8 @@ function showArmy(territory){
 		else if(territory.color != "" && (territory.soldiers > 0 || territory.captain) && game.state === "battle"){
 			armyString += "<span class='showMoves'>SHOTS: " + territory.shots + "</span><br>";
 		}
-		if(territory.hasOwnProperty('flag') && territory.flag === true){
-			armyString += "<img class='flag " + territory.color + "' src='images/flag-" + territory.color + ".png'>";
+		if(territory.hasOwnProperty('flag')){
+			armyString += "<img class='flag " + territory.color + "' src='images/flag-" + territory.flag + ".png'>";
 			if(territory.captain === false){
 				armyString += "<br>";
 			}

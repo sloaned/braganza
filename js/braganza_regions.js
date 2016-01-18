@@ -175,7 +175,7 @@ commandPosts.push(dogtown);
 commandPosts.push(annisquam);
 
 for(var i = 0; i < commandPosts.length; i++){
-	commandPosts[i].flag = false;
+	commandPosts[i].flag = "";
 }
 
 var stagingAreas = [];
