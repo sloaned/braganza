@@ -886,6 +886,9 @@ function sendArmy(soldiers){
 		}
 		
 	}
+	else if(soldiers === 0){
+		cancelMove();
+	}
 	
 };
 
