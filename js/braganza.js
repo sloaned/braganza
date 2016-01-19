@@ -1380,5 +1380,5 @@ function placeSerpent(){
 	var cornerNumber = Math.floor(Math.random() * 4);
 	corners[cornerNumber].color = "serpent";
 	corners[cornerNumber].moves = 4;
-	
+	showSerpent(corners[cornerNumber]);
 };
