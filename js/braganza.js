@@ -145,11 +145,13 @@ $(document).ready(function(){
 					if(commandPosts[i].soldiers < 8 && game.players[game.turn].soldiers > 24){
 						action = true;
 						var addPrompt = "<div class='prompt'><span>You have " + (game.players[game.turn].soldiers - 24)  + " soldiers left to place.</span><br>";
-						addPrompt += "<select id='armPost'>";
+						//addPrompt += "<select id='armPost'>";
 						for(var j = 1; j+commandPosts[i].soldiers <= 8 && (game.players[game.turn].soldiers - j) >= 24; j++){
-							addPrompt += "<option>" + j + "</option>";
+							//addPrompt += "<option>" + j + "</option>";
+							addPrompt += "<button onclick='armPost(" + j + ")'>" + j + "</button>";
 						}
-						addPrompt += "</select><button onclick='armPost()'>Add soldiers</button><button onclick='removePrompt()'>Cancel</button></div>";
+						//addPrompt += "</select><button onclick='armPost()'>Add soldiers</button>";
+						addPrompt += "<button onclick='removePrompt()'>Cancel</button></div>";
 						destination = commandPosts[i];
 						$('#army-'+ commandPosts[i].name).css("z-index", 1);
 						$('#army-'+ commandPosts[i].name).append(addPrompt);
@@ -430,8 +432,8 @@ function addCannon(){
 	}
 };
 
-function armPost(){
-	var numSoldiers = parseInt($("#armPost").val());
+function armPost(numSoldiers){
+	//var numSoldiers = parseInt($("#armPost").val());
 	destination.soldiers += numSoldiers;
 	game.players[game.turn].soldiers -= numSoldiers;
 	if(game.players[game.turn].soldiers === 24){
@@ -725,13 +727,16 @@ function victoryMove(region){
 		movePrompt += "Captain <input id='moveCaptain' type='checkbox'><br>";
 	}
 	if(highlightedRegion.soldiers > 0){ 
-		movePrompt += "Soldiers <select id='moveSoldiers'>";
+		movePrompt += "Soldiers:";
+		//movePrompt += "Soldiers <select id='moveSoldiers'>";
 		for(var i = 1; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
-			movePrompt += "<option>" + i + "</option>";
+			//movePrompt += "<option>" + i + "</option>";
+			movePrompt += "<button onclick='sendArmy(" + i + ")'>" + i + "</button>";
 		}
-		movePrompt += "</select>";
+		//movePrompt += "</select>";
 	}
-	movePrompt += "<span><button onclick='sendArmy()'>Move in!</button><button onclick='resetBoardAfterBattle()'>No move</button></span></div>";
+	// movePrompt += "<span><button onclick='sendArmy()'>Move in!</button>";
+	movePrompt += "<button onclick='resetBoardAfterBattle()'>No move</button></span></div>";
 	$('.battle').remove();
 	calculateShots(highlightedRegion);
 	calculateShots(region);
@@ -852,24 +857,26 @@ function movePrompt(region){
 	if(highlightedRegion.captain){
 		movePrompt += "Captain <input id='moveCaptain' type='checkbox'><br>";
 	}
-	if(highlightedRegion.soldiers > 0 && region.soldiers < 8){ 
-		movePrompt += "Soldiers <select id='moveSoldiers'>";
-		for(var i = 1; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
-			movePrompt += "<option>" + i + "</option>";
+	if(highlightedRegion.soldiers > 0 && region.soldiers < 8){
+		movePrompt += "Soldiers:<br>";
+		//movePrompt += "Soldiers <select id='moveSoldiers'>";
+		for(var i = 0; i <= highlightedRegion.soldiers && i+region.soldiers+region.newSoldiers <=8; i++){
+			//movePrompt += "<option>" + i + "</option>";
+			movePrompt += "<button onclick='sendArmy(" + i + ")'>" + i + "</button>";
 		}
-		movePrompt += "</select>";
+		//movePrompt += "</select>";
 	}
-	movePrompt += "<span><button onclick='sendArmy()'>Move!</button><button onclick='cancelMove()'>Cancel</button></span></div>";
+	movePrompt += "<span><button onclick='cancelMove()'>Cancel</button></span></div>";  // <button onclick='sendArmy()'>Move!</button>
 	$('#army-'+ highlightedRegion.name).css("z-index", 1);
 	$('#army-'+ highlightedRegion.name).append(movePrompt);
 };
 
-function sendArmy(){
+function sendArmy(soldiers){
 	var captain = $("#moveCaptain").prop('checked');
 	if(captain === undefined){
 		captain = false;
 	}
-	var soldiers = parseInt($("#moveSoldiers").val());
+	//var soldiers = parseInt($("#moveSoldiers").val());
 	if(captain || soldiers > 0){
 		if(game.state === "move"){
 			moveArmy(destination, captain, soldiers);
