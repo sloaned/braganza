@@ -32,8 +32,10 @@ button{
 	border-width: 0px;
 	vertical-align: top;
 	position: relative;
-	height: 950px;
-	width: 1153px;
+	/*height: 950px;
+	width: 1153px;*/
+	height: 60%;
+	width: 60%;
 }
 
 
@@ -64,6 +66,7 @@ button{
 	text-align: center;
 	padding: 5px;
 	z-index: -1;
+	font-size: 9px;
 }
 
 .prompt{
@@ -110,7 +113,7 @@ button{
 
 .serpent{
 	/* width: 125px; */
-	width: 125px;
+	width: 100px;
 	height: auto;
 	padding-right: 50px; /* margin-right*/
 }
