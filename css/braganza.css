@@ -32,6 +32,8 @@ button{
 	border-width: 0px;
 	vertical-align: top;
 	position: relative;
+	height: 1300px;
+	width: 1580px;
 }
 
 
@@ -49,7 +51,8 @@ button{
 }
 
 .die{
-	width: 26px;
+	/* width: 26px; */
+	width: 14px;
 	height: auto;
 	z-index: 1;
 }

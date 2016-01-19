@@ -604,7 +604,7 @@ function moveSerpent(region){
 	clearHighlight();
 	action = false;
 	game.state = "serpentAttack";
-	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent'>Done</button>");
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent()'>Done</button>");
 }
 
 function useSerpent(color, moves){
