@@ -204,6 +204,7 @@ for(var i = 0; i < regions.length; i++)
 	regions[i].shots = 0;
 	regions[i].newSoldiers = 0;
 	regions[i].newCaptain = false;
+	regions[i].battles = 0;
 }
 
 for(var i = 0; i < 39; i++)
