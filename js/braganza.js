@@ -213,6 +213,8 @@ $(document).ready(function(){
 						showArmies();
 						
 						if(game.players[game.turn].cannons === 2){ // we've just completed setup
+							console.log("setup complete");
+							game.abstentions = 0;
 							game.players.reverse();
 							$("#captainImages").empty();
 							for(var i = 0; i < game.players.length; i++){
@@ -409,19 +411,23 @@ function battlesComplete(){
 	else{
 		game.state = "move";
 		game.abstentions++;
+		console.log("abstentions = " + game.abstentions);
 		if(gameDrawn()){
 			gameEndsInDraw();
 		}
-		calculateAllMoves();
-		$("#image-" + game.players[game.turn].color).css("border", "none");
-		game.turn++;
-		if(game.turn >= game.players.length){
-			game.turn = 0;
+		else{
+			calculateAllMoves();
+			$("#image-" + game.players[game.turn].color).css("border", "none");
+			game.turn++;
+			if(game.turn >= game.players.length){
+				game.turn = 0;
+			}
+			$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+			$(".army").remove();
+			showArmies();
+			$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 		}
-		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-		$(".army").remove();
-		showArmies();
-		$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
+		
 	}
 
 };
@@ -471,7 +477,9 @@ function addCannon(){
 				}
 				// need to do something here to determine whose turn it is
 				if(game.players[game.turn].cannons === 2){ // we've just completed setup
+					console.log("setup complete");
 					game.players.reverse();
+					game.abstentions = 0;
 					$("#captainImages").empty();
 					for(var i = 0; i < game.players.length; i++){
 						$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
