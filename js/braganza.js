@@ -221,6 +221,9 @@ $(document).ready(function(){
 						}
 						else{
 							game.abstentions++;
+							if(gameDrawn()){
+								gameEndsInDraw();
+							}
 						}
 						$("#image-" + game.players[game.turn].color).css("border", "none");
 						if(game.turn === game.players.length-1){
@@ -406,6 +409,9 @@ function battlesComplete(){
 	else{
 		game.state = "move";
 		game.abstentions++;
+		if(gameDrawn()){
+			gameEndsInDraw();
+		}
 		calculateAllMoves();
 		$("#image-" + game.players[game.turn].color).css("border", "none");
 		game.turn++;
@@ -459,6 +465,10 @@ function addCannon(){
 				calculateAllMoves();
 				$(".army").remove();
 				showArmies();
+				game.abstentions++;
+				if(gameDrawn()){
+					gameEndsInDraw();
+				}
 				// need to do something here to determine whose turn it is
 				if(game.players[game.turn].cannons === 2){ // we've just completed setup
 					game.players.reverse();
@@ -633,6 +643,9 @@ function endSerpentAttack(region, kills){
 		region.captain = false;
 		region.cannons = 0;
 		region.color = "";
+		if(gameDrawn()){
+			gameEndsInDraw();
+		}
 	}
 	else{
 		for(var i = 0; i < kills; i++){
@@ -740,6 +753,9 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		if(highlightedRegion.type === "sea"){
 			highlightedRegion.cannons = 0;
 		}
+		if(gameDrawn()){
+			gameEndsInDraw();
+		}
 	}
 	else if(defenderKills > 0){
 		var attackSoldiers = highlightedRegion.soldiers;
@@ -824,6 +840,9 @@ function moveIn(region, captain, soldiers){
 	region.color = highlightedRegion.color;
 	if(region.hasOwnProperty('flag')){
 		region.flag = highlightedRegion.color;
+		if(gameWon()){
+			playerWonGame();
+		}
 		if(game.players[game.turn].soldiers > 0 && game.players[game.turn].reinforcements < 2){
 			game.players[game.turn].reinforcements++;
 		}
@@ -1026,6 +1045,9 @@ function moveArmy(region, captain, soldiers){
 	region.color = highlightedRegion.color;
 	if(region.hasOwnProperty('flag')){
 		region.flag = highlightedRegion.color;
+		if(gameWon()){
+			playerWonGame();
+		}
 	}
 
 	
