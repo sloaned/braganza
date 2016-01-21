@@ -49,6 +49,7 @@ $(document).ready(function(){
 							var defenderKills = 0;
 							var attackerSerpentMoves = 0;
 							var defenderSerpentMoves = 0;
+							game.abstentions = -1;
 							setTimeout(function(){
 								setTimeout(function(){
 									endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves);
@@ -210,13 +211,16 @@ $(document).ready(function(){
 						calculateAllMoves();
 						$(".army").remove();
 						showArmies();
-						// need to do something here to determine whose turn it is
+						
 						if(game.players[game.turn].cannons === 2){ // we've just completed setup
 							game.players.reverse();
 							$("#captainImages").empty();
 							for(var i = 0; i < game.players.length; i++){
 								$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
 							}
+						}
+						else{
+							game.abstentions++;
 						}
 						$("#image-" + game.players[game.turn].color).css("border", "none");
 						if(game.turn === game.players.length-1){
@@ -258,7 +262,18 @@ $(document).ready(function(){
 		game.reinforcementsAction = {cannon: false, soldiers: false};
 		game.serpentTurn = 0;
 		game.action = false;
+		game.abstentions = 0;
 		var numPlayers = $("#numberOfPlayers").val();
+		game.neededToWin = 7;
+		if(numPlayers === 2){
+			game.neededToWin = 7;
+		}
+		else if(numPlayers <= 4){
+			game.neededToWin = 6;
+		}
+		else{
+			game.neededToWin = 5;
+		}
 		var commandPostVals = [];
 		var colorVals = [];
 		for(var i = 0; i < 13; i++){
@@ -336,6 +351,32 @@ $(document).ready(function(){
 
 });
 
+function gameWon(){
+	var posts = 0;
+	for(var i = 0; i < commandPosts.length; i++){
+		if(commandPosts[i].hasOwnProperty('flag') && commandPosts[i].flag === game.players[game.turn].color){
+			posts++;
+		}
+	}
+	if(posts >= game.neededToWin){
+		return true;
+	}
+	return false;
+};
+
+function gameDrawn(){
+	if(game.abstentions >= (game.players.length * 2)){
+		return true;
+	}
+	for(var i = 0; i < regions.length; i++){
+		if(regions[i].color !== "" && regions[i].color !== "white" && regions[i].color !== "serpent"){
+			return false;
+		}
+	}
+	return true;
+
+};
+
 function battlesComplete(){
 	console.log("# of reinforcements = " + game.players[game.turn].reinforcements);
 	var stagingAreaAvailable = false;
@@ -352,6 +393,7 @@ function battlesComplete(){
 	}
 	else{
 		game.state = "move";
+		game.abstentions++;
 		calculateAllMoves();
 		$("#image-" + game.players[game.turn].color).css("border", "none");
 		game.turn++;
@@ -399,6 +441,7 @@ function addCannon(){
 		if(game.players[game.turn].reinforcements === 0){
 			if(game.turn === game.players.length -1 || (game.turn < (game.players.length -1) && game.players[game.turn+1].cannons < 3)){
 				game.state = "move";
+				game.abstentions++;
 				$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 
 				calculateAllMoves();
@@ -872,6 +915,7 @@ function movePrompt(region){
 };
 
 function sendArmy(soldiers){
+	game.abstentions = -1;
 	var captain = $("#moveCaptain").prop('checked');
 	if(captain === undefined){
 		captain = false;

@@ -214,7 +214,6 @@ for(var i = 0; i < 39; i++)
 for(var i = 39; i < regions.length; i++)
 {
 	regions[i].type = "sea";
-	//regions[i].boat = false;
 }
 
 conomopoint.name = "conomopoint";
