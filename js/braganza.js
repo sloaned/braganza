@@ -476,10 +476,7 @@ function addCannon(){
 				game.abstentions++;
 				$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 
-				calculateAllMoves();
-				$(".army").remove();
-				showArmies();
-				game.abstentions++;
+	
 				if(gameDrawn()){
 					gameEndsInDraw();
 				}
@@ -500,6 +497,9 @@ function addCannon(){
 				else{
 					game.turn++;
 				}
+				calculateAllMoves();
+				$(".army").remove();
+				showArmies();
 					
 				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 						
