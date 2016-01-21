@@ -351,6 +351,18 @@ $(document).ready(function(){
 
 });
 
+function playerWonGame(){
+	game.state = "over";
+	$("#image-" + game.players[game.turn].color).css("border", "none");
+	$("#instructions").html("<h2>Game Over</h2><h4>" + game.players[game.turn].color + " team wins!</h4>");
+};
+
+function gameEndsInDraw(){
+	game.state = "over";
+	$("#image-" + game.players[game.turn].color).css("border", "none");
+	$("#instructions").html("<h2>Game Over</h2><h4>The game ends in a draw.</h4>");
+}
+
 function gameWon(){
 	var posts = 0;
 	for(var i = 0; i < commandPosts.length; i++){
