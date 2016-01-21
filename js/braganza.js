@@ -41,7 +41,7 @@ $(document).ready(function(){
 						else if(game.state === "serpentMove"){
 							moveSerpent(reachable[i]);
 						}
-						else if(game.state === "battle"){
+						else if(game.state === "battle" && highlightedRegion.battles > 0){
 							var region = reachable[i];
 							var attackBattleResults;
 							var defenseBattleResults;
@@ -438,6 +438,10 @@ function moveDone(){
 			regions[i].soldiers++;
 			regions[i].newSoldiers--;
 		}
+		if(regions[i].newCaptain){
+			regions[i].captain = true;
+			regions[i].newCaptain = false;
+		}
 	}
 	for(var i = 0; i < regions.length; i++){
 		if(regions[i].color === game.players[game.turn].color){
@@ -668,7 +672,7 @@ function endSerpentAttack(region, kills){
 	game.state = "battle";
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn'>Done</button>");
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='battlesComplete()'>Done</button>");
 };
 
 function moveSerpent(region){
@@ -720,7 +724,7 @@ function doneWithSerpent(){
 	showArmies();
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='endTurn()'>Done</button>");
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='battlesComplete()'>Done</button>");
 };
 		
 /* remove dead troops from the board */		
@@ -750,7 +754,7 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 			region.soldiers--;
 		}
 	}
-	
+	highlightedRegion.battles = 0;
 	var attackTroops = highlightedRegion.soldiers;
 	if(highlightedRegion.captain){ attackTroops++; }
 	if(defenderKills >= attackTroops){
@@ -775,6 +779,7 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 	if(region.type === "land" && (!region.captain && region.soldiers === 0) && highlightedRegion.color !== "" && highlightedRegion.landTravel.indexOf(region) !== -1){
 		//attacker won, can move troops in
 		victoryMove(region);
+		region.battles = 0;
 	}
 	else{
 		calculateShots(highlightedRegion);
@@ -1319,7 +1324,7 @@ function findAttackableAreas(region){
 function findSerpentAttackableAreas(region){
 	var areas = [];
 	for(var i = 0; i < region.attack.length; i++){
-		if(region.attack[i].type === "sea" && region.attack[i].color !== ""){
+		if(region.attack[i].type === "sea" && region.attack[i].color !== "" && region.attack[i].color !== game.players[serpentTurn].color){
 			$("#" + region.attack[i].name).css("cursor", "url('images/bullseye-cursor.png'), default");
 			$("#army-" + region.attack[i].name).css("cursor", "url('images/bullseye-cursor.png'), default");
 			areas.push(region.attack[i]);
