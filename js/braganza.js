@@ -1469,7 +1469,7 @@ function showSerpent(region){
 
 function showArmies(){
 	for(var i = 0; i < regions.length; i++){
-		if((regions[i].color != "" || regions[i].cannons > 0) && regions[i].color != "serpent"){
+		if((regions[i].color !== "" || regions[i].cannons > 0 || (regions[i].hasOwnProperty('flag') && regions[i].flag !== "")) && regions[i].color !== "serpent"){
 			var army = showArmy(regions[i]);
 			$("#mapArea").append(army);
 		}	
