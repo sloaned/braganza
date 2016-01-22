@@ -480,7 +480,6 @@ function addCannon(){
 				if(gameDrawn()){
 					gameEndsInDraw();
 				}
-				// need to do something here to determine whose turn it is
 				if(game.players[game.turn].cannons === 2){ // we've just completed setup
 					console.log("setup complete");
 					game.players.reverse();
@@ -733,10 +732,6 @@ function doneWithSerpent(){
 		
 /* remove dead troops from the board */		
 function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves){
-	console.log("highlighted region color = " + highlightedRegion.color);
-	console.log("defender color = " + region.color);
-	console.log("attacker soldiers = " + highlightedRegion.soldiers);
-	console.log("defender soldiers = " + region.soldiers);
 	
 	var attackerColor = highlightedRegion.color;
 	var defenderColor = region.color;
@@ -1424,7 +1419,8 @@ function rollDice(dice, color){
 function showArmy(territory){
 		var armyString = "";
 	
-		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen'>";
+		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen' onclick=\"clickArmy('" + territory.name + "')\">";
+		//  onclick=\"clickArmy('" + territory.name + "')\"
 		if(territory.color === game.players[game.turn].color && (territory.soldiers > 0 || territory.captain) && game.state === "move"){
 			armyString += "<span class='showMoves'>MOVES: " + territory.moves + "</span><br>";
 		}
@@ -1463,8 +1459,9 @@ function showArmy(territory){
 };
 
 function showSerpent(region){
-	var serpentString = "<div class='army " + region.name + "' id='army-" + region.name + "'><div class='armymen'><img class='serpent' src='images/serpent-right.png'></div></div>";
+	var serpentString = "<div class='army " + region.name + "' id='army-" + region.name + "'><div class='armymen' onclick=\"clickArmy('" + region.name + "')\"><img class='serpent' src='images/serpent-right.png'></div></div>";
 	$("#mapArea").append(serpentString);
+	//   onclick=\"clickArmy('" + region.name + "')\"
 };
 
 function showArmies(){
@@ -1487,3 +1484,8 @@ function placeSerpent(){
 	corners[cornerNumber].moves = 4;
 	showSerpent(corners[cornerNumber]);
 };
+
+function clickArmy(region){
+	console.log("army clicked: " + region);
+	$("#" + region).click();
+}
