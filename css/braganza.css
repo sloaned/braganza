@@ -125,12 +125,12 @@ button{
 }
 
 #instructionArea{
-	height: 220px;
-	line-height: 160px;
+	height: 330px;
+	line-height: 200px;
 	text-align: center;
 	overflow: hidden;
-	padding-left: 30px;
-	padding-right: 30px;
+	padding-left: 70px;
+	padding-right: 70px;
 }
 
 #gameInfo{
@@ -141,6 +141,34 @@ button{
 	display: inline-block;
 	vertical-align: middle;
 	line-height: normal;
+}
+
+.warning{
+	color: red;
+}
+
+.Red{
+	color: red;
+}
+
+.Orange{
+	color: orange;
+}
+
+.Yellow{
+	color: yellow;
+}
+
+.Green{
+	color: green;
+}
+
+.Blue{
+	color: blue;
+}
+
+.Purple{
+	color: purple;
 }
 
 #captainImages{
