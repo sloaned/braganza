@@ -62,20 +62,20 @@ function clickArmy(region){
  INSTRUCTION FUNCTIONS 
  *************************/
 function pickCommandPostsInstructions(){
-	var instructions = "<h2>Setup</h2><h4>Part 1: Pick an additional command post</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span>";
+	var instructions = "<h2>Setup</h2><h4>Round 1: Pick an additional command post</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span>";
 	if(game.players.length < 6){
 		instructions += "<br><br>Any command posts unclaimed after this round will be occupied by a neutral army.";
 	}
-	instructions += "<br><br>Note: play order will reverse once setup is complete";
+	instructions += "<br><br>Play order will reverse once setup is complete";
 	$("#instructions").html(instructions);
 };
 
 function armCommandPostsInstructions(){
-	$("#instructions").html("<h2>Setup</h2><h4>Part 2: Arm command posts.</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span><br><br>Post 15 soldiers among your command posts. No territory may hold more than 8 soldiers.<br><br>Note: play order will reverse once setup is complete");
+	$("#instructions").html("<h2>Setup</h2><h4>Round 2: Arm command posts.</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span><br><br>Post 15 soldiers among your command posts. No territory may hold more than 8 soldiers.<br><br>Play order will reverse once setup is complete");
 };
 
 function stageReinforcementsSetupInstructions(){
-	$("#instructions").html("<h2>Setup</h2><h4>Part 3: Stage reinforcements</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span><br><br>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories.<br><br>Note: play order will reverse once setup is complete");
+	$("#instructions").html("<h2>Setup</h2><h4>Round 3: Stage reinforcements</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span><br><br>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories.<br><br>Play order will reverse and game will begin after this round");
 };
 
 function stageReinforcementsGameInstructions(){
@@ -268,7 +268,7 @@ function newGame(){
 	else{
 		game.neededToWin = 5;
 	}
-	$("#commandPostsNeeded").html("<h2>Command Posts needed to win: " + game.neededToWin + "</h2>");
+	$("#commandPostsNeeded").html("<h3>Command Posts needed to win: " + game.neededToWin + "</h3>");
 	var commandPostVals = [];
 	var colorVals = [];
 	for(var i = 0; i < 13; i++){
@@ -295,10 +295,7 @@ function newGame(){
 		game.players[i].soldiers = 39;
 		game.players[i].reinforcements = 0;
 		game.players[i].captainImage = getCaptainImage(game.players[i].commandPost.name);
-		if(i === 3){
-			$("#captainImages").append("<br>");
-		}
-		$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");	
+		showCaptains();
 	}
 	
 	for(var i = 0; i < regions.length; i++){
@@ -347,7 +344,7 @@ function setMaphilightDefaults(){
 function pickCommandPosts(region){
 	region.flag = game.players[game.turn].color;
 	$("#mapArea").append(showArmy(region));
-	
+	showCaptains();
 	if(game.turn === game.players.length -1){
 		var done = false;
 		if(game.players.length > 4){
@@ -490,12 +487,7 @@ function stageReinforcementsDone(){
 				game.abstentions = 0;
 				game.players.reverse();
 				$("#captainImages").empty();
-				for(var i = 0; i < game.players.length; i++){
-					if(i === 3){
-						$("#captainImages").append("<br>");
-					}
-					$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div></div>");								
-				}
+				showCaptains();
 			}
 			else{
 				game.abstentions++;
@@ -869,6 +861,7 @@ function moveArmy(region, captain, soldiers){
 	region.color = highlightedRegion.color;
 	if(region.hasOwnProperty('flag') && region.flag !== highlightedRegion.color){
 		region.flag = highlightedRegion.color;
+		showCaptains();
 		if(gameWon()){
 			playerWonGame();
 		}
@@ -1104,6 +1097,7 @@ function moveIn(region, captain, soldiers){
 	region.color = highlightedRegion.color;
 	if(region.hasOwnProperty('flag')){
 		region.flag = highlightedRegion.color;
+		showCaptains();
 		if(gameWon()){
 			playerWonGame();
 		}
@@ -1301,6 +1295,23 @@ function redisplayRegions(region1, region2){
 	$('.'+ region2.name).remove();
 	$("#mapArea").append(showArmy(region1));
 	$("#mapArea").append(showArmy(region2));
+};
+
+function showCaptains(){
+	$("#captainImages").empty();
+	var posts;
+	for(var i = 0; i < game.players.length; i++){
+		posts = 0;
+		for(var j = 0; j < commandPosts.length; j++){
+			if(commandPosts[j].flag === game.players[i].color){
+				posts++;
+			}
+		}
+		if(i === 3){
+			$("#captainImages").append("<br>");
+		}
+		$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div><h4>" + posts + "</h4></div>");	
+	}
 };
 
 
