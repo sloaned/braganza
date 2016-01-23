@@ -125,7 +125,7 @@ button{
 }
 
 #instructionArea{
-	height: 330px;
+	max-height: 300px;
 	line-height: 200px;
 	text-align: center;
 	overflow: hidden;

@@ -12,8 +12,7 @@ var game = {state: "", turn: 0};
 
 $(document).ready(function(){
 	
-	setMaphilightDefaults();
-	 
+	setMaphilightDefaults(); 
 	$('img[usemap]').maphilight();
 	$('map').imageMapResize();
 	
@@ -148,6 +147,7 @@ function takeAction(region){
 		var defenderSerpentMoves = 0;
 		game.abstentions = -1;
 		battleInstructions();
+		$(".doneButton").hide();
 		setTimeout(function(){
 			setTimeout(function(){
 				endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, defenderSerpentMoves);
@@ -254,6 +254,7 @@ function newGame(){
 	game.boats = 13;
 	game.reinforcementsAction = {cannon: false, soldiers: false};
 	game.serpentTurn = 0;
+	game.serpentAction = [false, 0]; // activation boolean, number of moves
 	game.action = false;
 	game.abstentions = 0;
 	var numPlayers = parseInt($("#numberOfPlayers").val());
@@ -267,6 +268,7 @@ function newGame(){
 	else{
 		game.neededToWin = 5;
 	}
+	$("#commandPostsNeeded").html("<h2>Command Posts needed to win: " + game.neededToWin + "</h2>");
 	var commandPostVals = [];
 	var colorVals = [];
 	for(var i = 0; i < 13; i++){
@@ -554,6 +556,7 @@ function resetBoard(){
 	}
 	$("#captainImages").empty();
 	$(".army").remove();
+	$(".battle").remove();
 };
 
 function placeSerpent(){
@@ -593,6 +596,7 @@ function highlightAreas(region, act)
 		data.fillOpacity = 0.6;
 		$("#" + region.name).data('maphilight', data).trigger('alwaysOn.maphilight');
 		$(".doneButton").hide();
+		$("#startNewGame").hide();
 	}
 };
 
@@ -614,6 +618,7 @@ function clearHighlight(){
 	highlighted = false;
 	reachable = [];
 	$(".doneButton").show();
+	$("#startNewGame").show();
 };
 
 function findReachableAreas(region){
@@ -791,6 +796,9 @@ function cancelMove(){
 	game.action = false;
 	redisplayRegion(highlightedRegion);
 	$('#army-'+ highlightedRegion.name).css("z-index", 0);
+	if(game.state === "battle" && game.serpentAction[0]){
+		useSerpent();
+	}
 };
 
 function moveArmy(region, captain, soldiers){
@@ -980,6 +988,22 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 	
 	var attackerColor = highlightedRegion.color;
 	var defenderColor = region.color;
+	if(attackerSerpentMoves > defenderSerpentMoves){
+		game.serpentAction = [true, (attackerSerpentMoves-defenderSerpentMoves)];
+		game.serpentTurn = game.turn;
+	}
+	else if(defenderSerpentMoves > attackerSerpentMoves && region.color !== "white"){
+		game.serpentAction = [true, (defenderSerpentMoves-attackerSerpentMoves)];
+		for(var i = 0; i < game.players.length; i++){
+			if(game.players[i].color === region.color){
+				game.serpentTurn = i;
+				break;
+			}
+		}
+	}
+	else{
+		game.serpentAction = [false, 0];
+	}
 	
 	var regionTroops = region.soldiers;
 	if(region.captain){ regionTroops++; }
@@ -1031,12 +1055,9 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		redisplayRegions(highlightedRegion, region);
 		game.action = false;
 		clearHighlight();
-		if(attackerSerpentMoves > defenderSerpentMoves){
-			useSerpent(attackerColor, attackerSerpentMoves-defenderSerpentMoves);
+		if(game.serpentAction[0]){
+			useSerpent();
 		}
-		else if(defenderSerpentMoves > attackerSerpentMoves && region.color !== ""){ // no serpent for neutral team
-			useSerpent(defenderColor, defenderSerpentMoves-attackerSerpentMoves);
-		}	
 	}	
 };
 
@@ -1099,6 +1120,9 @@ function moveIn(region, captain, soldiers){
 	redisplayRegions(highlightedRegion, region);
 	game.action = false;
 	clearHighlight();
+	if(game.serpentAction[0]){
+		useSerpent();
+	}
 	
 };
 
@@ -1110,6 +1134,9 @@ function resetBoardAfterBattle(){
 	$('#army-'+ highlightedRegion.name).css("z-index", 0); // ?
 	game.action = false;
 	clearHighlight();
+	if(game.serpentAction[0]){
+		useSerpent();
+	}
 };
 
 /* check if player has been annihilated from the board */
@@ -1165,7 +1192,6 @@ function endSerpentAttack(region, kills){
 		}
 	}
 	
-	
 	calculateAllShots();
 	redisplayRegion(region);
 	clearHighlight();
@@ -1173,6 +1199,7 @@ function endSerpentAttack(region, kills){
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 	battleInstructions();
+	game.serpentAction = [false, 0];
 };
 
 function moveSerpent(region){
@@ -1187,19 +1214,13 @@ function moveSerpent(region){
 	serpentAttackInstructions();
 }
 
-function useSerpent(color, moves){
-	game.serpentTurn = 0;
+function useSerpent(){
 	for(var i = 39; i < regions.length; i++){
 		if(regions[i].color === "serpent"){
-			regions[i].moves = moves*2;
+			regions[i].moves = game.serpentAction[1]*2;
 		}
 	}
 	
-	for(var i = 0; i < game.players.length; i++){
-		if(game.players[i].color === color){
-			game.serpentTurn = i;
-		}
-	}
 	$("#image-" + game.players[game.turn].color).css("border", "none");
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "thick solid black");
 	$(".army").remove();
@@ -1222,6 +1243,7 @@ function doneWithSerpent(){
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 	battleInstructions();
+	game.serpentAction = [false, 0];
 };
 
 /***************************
