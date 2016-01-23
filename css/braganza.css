@@ -45,7 +45,7 @@ button{
 }
 
 .dice{
-	z-index: 1;
+	z-index: 2;
 }
 
 .armymen{
@@ -56,7 +56,7 @@ button{
 	/* width: 26px; */
 	width: 18px;
 	height: auto;
-	z-index: 1;
+	z-index: 2;
 }
 
 .showMoves{
