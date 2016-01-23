@@ -1,6 +1,6 @@
 // explosion art via http://lucasb.eyer.be
 
-var colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"];
+var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
 var diceShake = new Audio('audio/dice-shake.mp3');
 var musket = new Audio('audio/bullets2.mp3');
 var ricochet = new Audio('audio/ricochet.mp3');
@@ -30,7 +30,7 @@ $(document).ready(function(){
 		if(highlighted && region === highlightedRegionName && !game.action){  // player reclicks highlighted area, cancel highlight
 			clearHighlight();
 		}
-		else if(highlighted && reachableNames.indexOf(region) !== -1){	// player clicks reachable area, take action
+		else if(highlighted && reachableNames.indexOf(region) !== -1){	// player clicks area surrounding highlighted area, take game.action
 			if(!game.action){
 				for(var i = 0; i < reachable.length; i++){
 					if(reachable[i].name === region){
@@ -93,7 +93,7 @@ $(document).ready(function(){
 		}
 		else if(game.state === "pickCommandPosts"){
 			for(var i = 0; i < commandPosts.length; i++){
-				if(commandPosts[i].name === region && commandPosts[i].flag === ""){
+				if(commandPosts[i].name === region && commandPosts[i].color === ""){
 					//commandPosts[i].color = game.players[game.turn].color;
 					commandPosts[i].flag = game.players[game.turn].color;
 					$("#mapArea").append(showArmy(commandPosts[i]));
@@ -114,30 +114,23 @@ $(document).ready(function(){
 								done = true;
 							}
 						}
-						
-						$("#image-" + game.players[game.turn].color).css("border", "none");
-						game.turn = 0;	
-						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-						
 						if(done){
 							$(".army").remove();
 							game.state = "armCommandPosts";
-							armCommandPostsInstructions();
+							$("#instructions").html("<h2>Setup</h2><h4>Part 2: Arm command posts.</h4>Post 15 soldiers among your command posts. No territory may hold more than 8 soldiers.<br><br>Note: play order will reverse once setup is complete");
 							if(game.players.length < 6){
 								addNeutralArmies();
 							}
 							calculateAllShots();
 							showArmies();	
 						}
-						else{
-							pickCommandPostsInstructions();
-						}
-						
+						$("#image-" + game.players[game.turn].color).css("border", "none");
+						game.turn = 0;	
+						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 					}
 					else{
 						$("#image-" + game.players[game.turn].color).css("border", "none");
 						game.turn++;
-						pickCommandPostsInstructions();
 						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 					}
 					
@@ -173,7 +166,7 @@ $(document).ready(function(){
 						game.action = true;
 						destination = regions[i];
 						var addCannonPrompt = "<div class='prompt'><span>Add a cannon here?</span><br>";
-						addCannonPrompt += "<button onclick='addCannon()'>Do it</button><button onclick='removePrompt()'>Cancel</button></div>";
+						addCannonPrompt += "<button onclick='addCannon()'>Do it</button><button onclick='removePrompt()'>Cancel</button>";
 						
 						$('#army-'+ region).css("z-index", 1);
 						$('#army-'+ region).append(addCannonPrompt);
@@ -209,7 +202,12 @@ $(document).ready(function(){
 				game.reinforcementsAction = {cannon: false, soldiers: false};
 				game.players[game.turn].reinforcements--;
 				if(game.players[game.turn].reinforcements === 0){
-					if(game.turn === game.players.length -1 || game.players[game.turn+1].cannons < 3){ // no longer in setup, or setup complete
+					if(game.turn === game.players.length -1 || (game.turn < (game.players.length -1) && game.players[game.turn+1].cannons < 3)){ // no longer in setup, or setup complete
+						game.state = "move";
+						$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
+						calculateAllMoves();
+						$(".army").remove();
+						showArmies();
 						
 						if(game.players[game.turn].cannons === 2){ // we've just completed setup
 							console.log("setup complete");
@@ -229,34 +227,22 @@ $(document).ready(function(){
 								gameEndsInDraw();
 							}
 						}
-						
-						game.state = "move";
-						calculateAllMoves();
-						$(".army").remove();
-						
 						$("#image-" + game.players[game.turn].color).css("border", "none");
-						
 						if(game.turn === game.players.length-1){
 							game.turn = 0;	
 						}
 						else{
 							game.turn++;
 						}
-						showArmies();
-						moveInstructions();
 						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 						
 					}
 					else{ // still in setup
 						$("#image-" + game.players[game.turn].color).css("border", "none");
 						game.turn++;
-						stageReinforcementsSetupInstructions();
 						$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 						game.reinforcementsAction = {cannon: false, soldiers: false};
 					}
-				}
-				else{
-					stageReinforcementsGameInstructions();
 				}
 			}
 			
@@ -338,7 +324,7 @@ $(document).ready(function(){
 		}
 		showArmies();
 		game.state = "pickCommandPosts";
-		pickCommandPostsInstructions();
+		$("#instructions").html("<h2>Setup</h2><h4>Part 1: Pick an additional command post</h4>Note: play order will reverse once setup is complete");
 		game.turn = 0;
 		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 		placeSerpent();
@@ -357,54 +343,20 @@ $(document).ready(function(){
 		calculateAllShots();
 		showArmies();
 	});
-	
+	/*
+	$('.army').click(function(){
+		//e.preventDefault();
+		var armyId = $(this).attr('id').toString();
+		var region = armyId.substr(5);
+		console.log("region = ");
+		console.log(region);
+	});*/
 	/*placeSerpent();
 	randomlyPopulateBoard();
 	calculateAllShots();
 	showArmies();*/
 
 });
-
-/*************************\
- INSTRUCTION FUNCTIONS 
- *************************/
-function pickCommandPostsInstructions(){
-	var instructions = "<h2>Setup</h2><h4>Part 1: Pick an additional command post</h4>Turn: " + game.players[game.turn].color;
-	if(game.players.length < 6){
-		instructions += "<br><br>Any command posts unclaimed after this round will be occupied by a neutral army.";
-	}
-	instructions += "<br><br>Note: play order will reverse once setup is complete";
-	$("#instructions").html(instructions);
-};
-
-function armCommandPostsInstructions(){
-	$("#instructions").html("<h2>Setup</h2><h4>Part 2: Arm command posts.</h4>Turn: " + game.players[game.turn].color + "<br><br>Post 15 soldiers among your command posts. No territory may hold more than 8 soldiers.<br><br>Note: play order will reverse once setup is complete");
-};
-
-function stageReinforcementsSetupInstructions(){
-	$("#instructions").html("<h2>Setup</h2><h4>Part 3: Stage reinforcements</h4>Turn: " + game.players[game.turn].color + "<br><br>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories.<br><br>Note: play order will reverse once setup is complete");
-};
-
-function stageReinforcementsGameInstructions(){
-	$("#instructions").html("<h2>" + game.players[game.turn].color + " team has captured a command post!</h2><h4>Reinforcements to stage: " + game.players[game.turn].reinforcements + "</h4>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories that does not already have two cannons." + 
-		"You may use a staging area on the water if there are boats available.<br><br>Boats remaining: " + game.boats);
-};
-
-function moveInstructions(){
-	$("#instructions").html("<h2>Move troops</h2><h4>Turn: " + game.players[game.turn].color + "</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button class='doneButton' onclick='moveDone()'>Done</button>");	
-};
-
-function battleInstructions(){
-	$("#instructions").html("<h2>Battle</h2><h4>Turn: " + game.players[game.turn].color + "</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button class='doneButton' onclick='battlesComplete()'>Done</button>");
-};
-
-function moveSerpentInstructions(){
-	$("#instructions").html("<h2>Game</h2><h4>SERPENT AWAKENED</h4>" + game.players[game.serpentTurn].color + " team may move the serpent, or click 'Done' to abstain.<br><button onclick='doneMovingSerpent()'>Done</button>");
-};
-
-function serpentAttackInstructions(){
-	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button class='doneButton' onclick='doneWithSerpent()'>Done</button>");
-};
 
 function playerWonGame(){
 	game.state = "over";
@@ -463,7 +415,8 @@ function battlesComplete(){
 	if(game.players[game.turn].reinforcements > 0 && stagingAreaAvailable){
 		console.log("reinforcements triggered!");
 		game.state = "stageReinforcements";
-		stageReinforcementsGameInstructions();
+		$("#instructions").html("<h2>You have captured a command post!</h2><h4>You may now stage reinforcements.</h4>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories that does not already have two cannons.");
+
 	}
 	else{
 		game.state = "move";
@@ -482,7 +435,7 @@ function battlesComplete(){
 			$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 			$(".army").remove();
 			showArmies();
-			moveInstructions();
+			$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
 		}
 		
 	}
@@ -512,7 +465,7 @@ function moveDone(){
 	$(".army").remove();
 	calculateAllShots();
 	showArmies();
-	battleInstructions();
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='battlesComplete()'>Done</button>");
 };
 
 function addCannon(){
@@ -527,15 +480,17 @@ function addCannon(){
 		game.reinforcementsAction = {cannon: false, soldiers: false};
 		game.players[game.turn].reinforcements--;
 		if(game.players[game.turn].reinforcements === 0){
-			if(game.turn === game.players.length -1 || game.players[game.turn+1].cannons < 3){ // no longer in setup, or setup just completed
+			if(game.turn === game.players.length -1 || (game.turn < (game.players.length -1) && game.players[game.turn+1].cannons < 3)){
 				game.state = "move";
 				game.abstentions++;
-				moveInstructions();
+				$("#instructions").html("<h2>Game</h2><h4>Move troops</h4>Click on any troops you wish to move. Click 'Done' when you are finished moving your armies.<br><br><button onclick='moveDone()'>Done</button>");
+
 	
 				if(gameDrawn()){
 					gameEndsInDraw();
 				}
 				if(game.players[game.turn].cannons === 2){ // we've just completed setup
+					console.log("setup complete");
 					game.players.reverse();
 					game.abstentions = 0;
 					$("#captainImages").empty();
@@ -560,15 +515,11 @@ function addCannon(){
 				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 						
 			}
-			else{ // still in setup
+			else{
 				$("#image-" + game.players[game.turn].color).css("border", "none");
 				game.turn++;
-				stageReinforcementsSetupInstructions();
 				$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 			}
-		}
-		else{
-			stageReinforcementsGameInstructions();
 		}
 	}
 };
@@ -582,20 +533,19 @@ function armPost(numSoldiers){
 	}
 	if(game.players[game.turn].soldiers === 24){
 		if((game.turn) === game.players.length -1){
-			
+			game.state = "stageReinforcements";
+			$("#instructions").html("<h2>Setup</h2><h4>Part 3: Stage reinforcements</h4>Add one more battallion of 8 soldiers on any staging area (signified by a triangle). Additionally, add a cannon to any of your territories.<br><br>Note: play order will reverse once setup is complete");
+
 			for(var i = 0; i < game.players.length; i++){
 				game.players[i].reinforcements = 1;
 			}
 			$("#image-" + game.players[game.turn].color).css("border", "none");
 			game.turn = 0;
 			$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-			game.state = "stageReinforcements";
-			stageReinforcementsSetupInstructions();
 		}
 		else{
 			$("#image-" + game.players[game.turn].color).css("border", "none");
 			game.turn++;
-			armCommandPostsInstructions();
 			$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 		}
 	}
@@ -740,7 +690,7 @@ function endSerpentAttack(region, kills){
 	game.state = "battle";
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-	battleInstructions();
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='battlesComplete()'>Done</button>");
 };
 
 function moveSerpent(region){
@@ -754,7 +704,7 @@ function moveSerpent(region){
 	clearHighlight();
 	game.action = false;
 	game.state = "serpentAttack";
-	serpentAttackInstructions();
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent()'>Done</button>");
 }
 
 function useSerpent(color, moves){
@@ -775,14 +725,14 @@ function useSerpent(color, moves){
 	$(".army").remove();
 	showArmies();
 	game.state = "serpentMove";
-	moveSerpentInstructions();
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT AWAKENED</h4>" + game.players[game.serpentTurn].color + " team may move the serpent, or click 'Done' to abstain.<br><button onclick='doneMovingSerpent()'>Done</button>");
 	
 };
 
 function doneMovingSerpent(){
 	console.log("done moving serpent");
 	game.state = "serpentAttack";
-	serpentAttackInstructions();
+	$("#instructions").html("<h2>Game</h2><h4>SERPENT READY TO ATTACK</h4>" + game.players[game.serpentTurn].color + " team may select the serpent to attack an adjacent enemy ship, or click 'Done' to abstain.<br><button onclick='doneWithSerpent()'>Done</button>");
 };
 
 function doneWithSerpent(){
@@ -792,7 +742,7 @@ function doneWithSerpent(){
 	showArmies();
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
-	battleInstructions();
+	$("#instructions").html("<h2>Game</h2><h4>Battle</h4>Select one of your armies to attack an adjacent territory. Each of your armies may engage in one battle per turn.<br><br>Click 'Done' to end your turn.<br><button onclick='battlesComplete()'>Done</button>");
 };
 		
 /* remove dead troops from the board */		
@@ -1186,7 +1136,6 @@ function clearHighlight(){
 	highlighted = false;
 	reachable = [];
 	reachableNames = [];
-	$(".doneButton").show();
 };
 
 function randomlyPopulateBoard(){
@@ -1280,7 +1229,6 @@ function highlightAreas(region, act)
 				data.strokeWidth = 6;
 				data.fillOpacity = 0.6;
 				$("#" + region).data('maphilight', data).trigger('alwaysOn.maphilight');
-				$(".doneButton").hide();
 			}
 			
 		}
