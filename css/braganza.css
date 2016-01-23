@@ -113,7 +113,7 @@ button{
 
 .serpent{
 	/* width: 125px; */
-	width: 100px;
+	width: 110px;
 	height: auto;
 	padding-right: 50px; /* margin-right*/
 }
@@ -122,16 +122,28 @@ button{
 .army, .battle{
 	position: absolute;
 }
+#mapArea{
+	 margin-left: 20px; 
+	float: left;
+}
 
 #gameInfo{
 	margin: 0px auto;
-	height: 220px;
+	/*height: 220px; */
 	margin-top: 25px;
+	
 }
 
 #instructionArea{
 	height: 220px;
 	line-height: 160px; /*220 px; */
+	text-align: center;
+	overflow: hidden;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+#gameInfo{
 	text-align: center;
 }
 
@@ -150,9 +162,11 @@ button{
 	height: 210px;
 	width: 126px; 
 	display: block;
-	float: left;
+	float: left; 
+	margin: 10px auto;
 	margin-left: 10px;
-	margin-right: 10px;
+	
+	
 }
 
 .tint{
@@ -163,27 +177,27 @@ button{
 
 }
 
-.tint-red{
+.tint-Red{
 	background: rgba(255, 0, 0, 0.55);
 }
 
-.tint-orange{
+.tint-Orange{
 	background: rgba(248, 75, 8, 0.55);
 }
 
-.tint-yellow{
+.tint-Yellow{
 	background: rgba(255,255,0,0.55);
 }
 
-.tint-green{
+.tint-Green{
 	background: rgba(0, 255, 0, 0.55);
 }
 
-.tint-blue{
+.tint-Blue{
 	background: rgba(0, 0, 255, 0.55);
 }
 
-.tint-purple{
+.tint-Purple{
 	background: rgba(125, 21, 253, 0.55);
 }
 

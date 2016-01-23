@@ -641,3 +641,66 @@ function getCaptainImage(commandPost){
 	}
 }
 
+
+/*
+
+function randomlyPopulateBoard(){
+	var armyNumber = Math.ceil(Math.random()*5)+1;
+	var armies = [];
+	var values = [];
+	for(var i = 0; i < 78; i++)
+	{
+		values.push(i);
+	}
+	var landEach = Math.floor(30/armyNumber);
+	for(var i = 0; i < armyNumber; i++)
+	{
+		armies.push({});
+		armies[i].color = colors[i];
+		
+		armies[i].territories = [];
+
+		for(var j = 0; j < landEach; j++)
+		{
+			var num = values[Math.floor(Math.random() * values.length)];
+			if(regions[num].color != "serpent"){
+				armies[i].territories.push(regions[num]);
+				var index = values.indexOf(num);
+				values.splice(index, 1);
+			}
+			else{
+				j--;
+			}
+		}
+		for(var j = 0; j < armies[i].territories.length; j++)
+		{
+			if(armies[i].territories[j].type === "sea"){
+				armies[i].territories[j].moves = 2;
+			}
+			else{
+				armies[i].territories[j].moves = 1;
+			}
+			armies[i].territories[j].color = armies[i].color;
+			
+			armies[i].territories[j].soldiers = Math.ceil(Math.random() * 8);
+			var artillery = Math.ceil(Math.random() * 7);
+			if(artillery < 5)
+			{
+				armies[i].territories[j].cannons = 0;
+			}
+			else if(artillery < 7)
+			{
+				armies[i].territories[j].cannons = 1;
+			}
+			else
+			{
+				armies[i].territories[j].cannons = 2;
+			}
+		}
+		armies[i].territories[0].captain = true;
+		
+	}
+};
+
+*/
+
