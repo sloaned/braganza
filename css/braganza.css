@@ -5,7 +5,7 @@ html
 }
 
 html, body{
-	background: #F5DCB5;/*#F7E1BC;*/
+	background: #F5DCB5;
 }
 
 button{
@@ -34,8 +34,6 @@ button{
 	position: relative;
 	height: 950px;
 	width: 1153px;
-	/*height: 60%;
-	width: 60%; */
 }
 
 
@@ -53,7 +51,6 @@ button{
 }
 
 .die{
-	/* width: 26px; */
 	width: 18px;
 	height: auto;
 	z-index: 2;
@@ -76,7 +73,6 @@ button{
 	z-index: 1;
 	position: absolute;
 	text-align: center;
-	/* width: 150px; */
 	width: 120px;
 	font-size: 10px;
 }
@@ -88,34 +84,29 @@ button{
 }
 
 .flag{
-	/* height: 35px; */
 	height: 24px;
 	width: auto;
 }
 
 .cannon{
-	/*width: 36px;*/
 	width: 25px;
 	height: auto;
 }
 
 .soldier{
-	/* height: 22px; */
 	height: 15px;
 	width: auto;
 }
 
 .captain{
-	/* height: 36px; */
 	height: 25px;
 	width: auto;
 }
 
 .serpent{
-	/* width: 125px; */
 	width: 110px;
 	height: auto;
-	padding-right: 50px; /* margin-right*/
+	padding-right: 50px;
 }
 
 
@@ -129,14 +120,13 @@ button{
 
 #gameInfo{
 	margin: 0px auto;
-	/*height: 220px; */
 	margin-top: 25px;
 	
 }
 
 #instructionArea{
 	height: 220px;
-	line-height: 160px; /*220 px; */
+	line-height: 160px;
 	text-align: center;
 	overflow: hidden;
 	padding-left: 30px;

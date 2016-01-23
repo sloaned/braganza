@@ -250,7 +250,6 @@ function battlesComplete(){
 		}
 	}
 	if(game.players[game.turn].reinforcements > 0 && stagingAreaAvailable){
-		console.log("reinforcements triggered!");
 		game.state = "stageReinforcements";
 		stageReinforcementsGameInstructions();
 	}
@@ -768,20 +767,17 @@ function moveArmy(region, captain, soldiers){
 
 	// two moves in a boat
 	if(highlightedRegion.type === "sea" && highlightedRegion.seaTravel.indexOf(region) === -1 && highlightedRegion.landTravel.indexOf(region) === -1){
-		//console.log("two boat moves");
 		highlightedRegion.moves = 0;
 	}
 	
 	// sea to sea, 1 space moved
 	else if(highlightedRegion.type === "sea" && region.type === "sea"){
-		//console.log("sea to sea, 1 move");
 		region.moves = highlightedRegion.moves - 1;
 		highlightedRegion.moves = 0;
 	}
 	
 	// sea to land in one move, boat moves decrement
 	else if(highlightedRegion.type === "sea"){
-		//console.log("boat to shore, one move");
 		highlightedRegion.moves--;
 	}
 	
@@ -906,7 +902,6 @@ function battle(region, shots){
 
 /* show the dice and hits/misses of a battle */
 function showBattleResults(region, results){
-	//console.log("showing battle results, region = " + region.name + ", results = " + results);
 	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
 	var result;
 	setTimeout(function(){
@@ -1092,7 +1087,6 @@ function resetBoardAfterBattle(){
 SERPENT FUNCTIONS
 *****************/
 function serpentAttack(region, shots){
-	console.log("serpent attack, region = " + region.name + ", shots = " + shots);
 	var battleResults = "<div class='battle " + region.name + "' id='battle-" + region.name + "'></div>";
 	$("#mapArea").append(battleResults);	
 	var kills = 0;
@@ -1112,7 +1106,6 @@ function serpentAttack(region, shots){
 };
 
 function endSerpentAttack(region, kills){
-	console.log("endSerpentAttack, region = " + region.name + ", kills = " + kills);
 	var troops = region.soldiers;
 	if(region.captain){
 		troops++;
@@ -1177,7 +1170,6 @@ function useSerpent(color, moves){
 };
 
 function doneMovingSerpent(){
-	console.log("done moving serpent");
 	game.state = "serpentAttack";
 	serpentAttackInstructions();
 };
