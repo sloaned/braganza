@@ -191,6 +191,8 @@ function battlesComplete(){
 	if(game.players[game.turn].reinforcements > 0 && stagingAreaAvailable){
 		game.state = "stageReinforcements";
 		stageReinforcementsGameInstructions();
+		$(".army").remove();
+		showArmies();
 	}
 	else{
 		game.state = "move";
@@ -873,7 +875,7 @@ function moveArmy(region, captain, soldiers){
 	
 	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){
 		highlightedRegion.moves = 0; // redundant?
-		if(highlightedRegion.newSoldiers === 0){
+		if(highlightedRegion.newSoldiers === 0 && !highlightedRegion.newCaptain){
 			highlightedRegion.color = "";
 		}
 	}
@@ -1007,6 +1009,9 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 			region.cannons = 0;
 		}
 		region.color = "";
+		if(isPlayerDefeated(defenderColor) && (!game.serpentAction[0] || game.serpentTurn === game.turn)){
+			removeDefeatedPlayer(defenderColor);
+		}
 		
 	}
 	else if(attackerKills > 0){
@@ -1025,6 +1030,9 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		highlightedRegion.soldiers = 0;
 		if(highlightedRegion.type === "sea"){
 			highlightedRegion.cannons = 0;
+		}
+		if(isPlayerDefeated(attackerColor) && (!game.serpentAction[0] || game.serpentTurn !== game.turn)){
+			removeDefeatedPlayer(attackerColor);
 		}
 		if(gameDrawn()){
 			gameEndsInDraw();
@@ -1143,6 +1151,32 @@ function isPlayerDefeated(color){
 	return true;
 };
 
+function removeDefeatedPlayer(color){
+	for(var i = 0; i < game.players.length; i++){
+		if(game.players[i].color === color){
+			if(game.turn > i){
+				game.turn--;
+			}
+			else if(game.turn === i){
+				if(i === game.players.length-1){
+					game.turn = 0;
+				}
+			}
+			game.players.splice(i, 1);
+			break;
+		}
+	}
+	for(var i = 0; i < commandPosts.length; i++){
+		if(commandPosts[i].flag === color){
+			commandPosts[i].flag = "";
+		}
+	}
+	$(".army").remove();
+	showArmies();
+	showCaptains();
+	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
+};
+
 
 /*****************
 SERPENT FUNCTIONS
@@ -1172,10 +1206,14 @@ function endSerpentAttack(region, kills){
 		troops++;
 	}
 	if(kills >= troops){
+		var loserColor = region.color;
 		region.soldiers = 0;
 		region.captain = false;
 		region.cannons = 0;
 		region.color = "";
+		if(isPlayerDefeated(loserColor)){
+			removeDefeatedPlayer(loserColor);
+		}
 		if(gameDrawn()){
 			gameEndsInDraw();
 		}
@@ -1190,6 +1228,11 @@ function endSerpentAttack(region, kills){
 	redisplayRegion(region);
 	clearHighlight();
 	game.state = "battle";
+	game.action = false;
+	if(isPlayerDefeated(game.players[game.serpentTurn].color)){
+		removeDefeatedPlayer(game.players[game.serpentTurn].color);
+	}
+
 	$("#image-" + game.players[game.serpentTurn].color).css("border", "none");
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 	battleInstructions();
@@ -1230,6 +1273,7 @@ function doneMovingSerpent(){
 };
 
 function doneWithSerpent(){
+	game.action = false;
 	game.state = "battle";
 	calculateAllShots();
 	$(".army").remove();
@@ -1238,6 +1282,10 @@ function doneWithSerpent(){
 	$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 	battleInstructions();
 	game.serpentAction = [false, 0];
+	if(isPlayerDefeated(game.players[game.serpentTurn].color)){
+		removeDefeatedPlayer(game.players[game.serpentTurn].color);
+	}
+
 };
 
 /***************************
@@ -1313,7 +1361,6 @@ function showCaptains(){
 		$("#captainImages").append("<div class='captainImage "  + game.players[i].captainImage + "' id='image-" + game.players[i].color + "'><div class='tint tint-" + game.players[i].color + "'></div><h4>" + posts + "</h4></div>");	
 	}
 };
-
 
 function showArmy(territory){
 		var armyString = "";
@@ -1397,7 +1444,6 @@ function gameWon(){
 	var posts = 0;
 	for(var i = 0; i < commandPosts.length; i++){
 		if(commandPosts[i].flag === game.players[game.turn].color){
-			console.log("player controls " + commandPosts[i].name);
 			posts++;
 		}
 	}
