@@ -62,7 +62,7 @@ function clickArmy(region){
  INSTRUCTION FUNCTIONS 
  *************************/
 function pickCommandPostsInstructions(){
-	var instructions = "<h2>Setup</h2><h4>Round 1: Pick an additional command post</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span>";
+	var instructions = "<h2>Setup</h2><h4>Round 1: Pick an additional command post. The command posts are the 13 territories marked with a circular seal.</h4>Turn: <span class='" + game.players[game.turn].color + "'>" + game.players[game.turn].color + "</span>";
 	if(game.players.length < 6){
 		instructions += "<br><br>Any command posts unclaimed after this round will be occupied by a neutral army.";
 	}

@@ -8,6 +8,10 @@ html, body{
 	background: #F5DCB5;
 }
 
+p{
+	text-indent: 50px;
+}
+
 button{
 	border-radius: 5px;
 	margin: .2em;
