@@ -1,6 +1,6 @@
 // explosion art via http://lucasb.eyer.be
 
-var colors = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple"];
+var colors = ["Red", "White", "Yellow", "Green", "Blue", "Black"];
 var diceShake = new Audio('audio/dice-shake.mp3');
 var musket = new Audio('audio/bullets2.mp3');
 var ricochet = new Audio('audio/ricochet.mp3');
@@ -183,7 +183,7 @@ function battlesComplete(){
 	}
 	var stagingAreaAvailable = false;
 	for(var i = 0; i < stagingAreas.length; i++){
-		if(stagingAreas[i].color === "" && (game.boats > 0 || stagingAreas[i].type === "land")){
+		if(stagingAreas[i].color === "" && stagingAreas[i].cannons < 2 && (game.boats > 0 || stagingAreas[i].type === "land")){
 			stagingAreaAvailable = true;
 			break;
 		}
@@ -388,7 +388,7 @@ function pickCommandPosts(region){
 };
 
 function armCommandPosts(region){
-	if(region.soldiers < 8 && game.players[game.turn].soldiers > 24){
+	if(region.soldiers < 8 && game.players[game.turn].soldiers >= 24){
 		game.action = true;
 		var addPrompt = "<div class='prompt'><span>You have " + (game.players[game.turn].soldiers - 24)  + " soldiers left to place.</span><br>";
 		for(var j = 1; j+region.soldiers <= 8 && (game.players[game.turn].soldiers - j) >= 24; j++){
@@ -418,7 +418,7 @@ function stageReinforcements(region){
 		if(stagingAreas.indexOf(region) !== -1 && region.color === "" && !game.reinforcementsAction.soldiers && (region.type === "land" || game.boats > 0)){
 			region.color = game.players[game.turn].color;
 			region.soldiers = 8;
-			game.players[game.turn].soldiers -= 8;
+			//game.players[game.turn].soldiers -= 8;
 			if(region.type === "sea"){
 				game.boats--;
 			}
@@ -458,6 +458,7 @@ function armPost(numSoldiers){
 			
 			for(var i = 0; i < game.players.length; i++){
 				game.players[i].reinforcements = 1;
+				game.players[i].soldiers -= 8;
 			}
 			newTurn(0);
 			game.state = "stageReinforcements";
@@ -525,9 +526,9 @@ function stageReinforcementsDone(){
 function addNeutralArmies(){
 	for(var i = 0; i < commandPosts.length; i++){
 		if(commandPosts[i].flag === ""){
-			commandPosts[i].color = "white";
+			commandPosts[i].color = "gray";
 			commandPosts[i].soldiers = 4;
-			commandPosts[i].flag = "white";
+			//commandPosts[i].flag = "gray";
 		}
 	}
 };
@@ -758,8 +759,8 @@ function movePrompt(region){
 			movePrompt += "<button onclick='sendArmy(" + i + ")'>" + i + "</button>";
 		}
 	}
-	movePrompt += "<span><button onclick='cancelMove()'>Cancel</button></span></div>";  // <button onclick='sendArmy()'>Move!</button>
-	$('#army-'+ highlightedRegion.name).css("z-index", 1);
+	movePrompt += "<span><button onclick='cancelMove()'>Cancel</button></span></div>"; 
+	$('#army-'+ highlightedRegion.name).css("z-index", 4); /* 1 */
 	$('#army-'+ highlightedRegion.name).append(movePrompt);
 };
 
@@ -867,8 +868,9 @@ function moveArmy(region, captain, soldiers){
 		if(gameWon()){
 			playerWonGame();
 		}
-		if(game.players[game.turn].soldiers > 0 && game.players[game.turn].reinforcements < 2){
+		if(game.players[game.turn].soldiers >= 8 && game.players[game.turn].reinforcements < 2){
 			game.players[game.turn].reinforcements++;
+			game.players[game.turn].soldiers -= 8;
 		}
 	}
 
@@ -937,8 +939,8 @@ function battle(region, shots){
 function showBattleResults(region, results){
 	$("#army-" + region.name).append("<div class='dice' id='dice-" + region.name + "'></div>");
 	var result;
-	setTimeout(function(){
-		diceShake.play();
+	//setTimeout(function(){
+		//diceShake.play();
 		var i = 0; 
 		function showResult(){
 			setTimeout(function(){
@@ -973,7 +975,7 @@ function showBattleResults(region, results){
 		};
 		
 		result = showResult();
-	}, 1400);
+	//}, 10);
 	
 	return result;
 };
@@ -987,7 +989,7 @@ function endBattle(region, attackerKills, defenderKills, attackerSerpentMoves, d
 		game.serpentAction = [true, (attackerSerpentMoves-defenderSerpentMoves)];
 		game.serpentTurn = game.turn;
 	}
-	else if(defenderSerpentMoves > attackerSerpentMoves && region.color !== "white"){
+	else if(defenderSerpentMoves > attackerSerpentMoves && region.color !== "gray"){
 		game.serpentAction = [true, (defenderSerpentMoves-attackerSerpentMoves)];
 		for(var i = 0; i < game.players.length; i++){
 			if(game.players[i].color === region.color){
@@ -1106,11 +1108,13 @@ function moveIn(region, captain, soldiers){
 	if(region.hasOwnProperty('flag')){
 		region.flag = highlightedRegion.color;
 		showCaptains();
+		$("#image-" + game.players[game.turn].color).css("border", "thick solid black");
 		if(gameWon()){
 			playerWonGame();
 		}
-		if(game.players[game.turn].soldiers > 0 && game.players[game.turn].reinforcements < 2){
+		if(game.players[game.turn].soldiers >= 8 && game.players[game.turn].reinforcements < 2){
 			game.players[game.turn].reinforcements++;
+			game.players[game.turn].soldiers -= 8;
 		}
 	}
 	if(highlightedRegion.captain === false && highlightedRegion.soldiers === 0){	
@@ -1152,6 +1156,8 @@ function isPlayerDefeated(color){
 };
 
 function removeDefeatedPlayer(color){
+	console.log("defeated color = " + color);
+	var oldTurnColor = game.players[game.turn].color;
 	for(var i = 0; i < game.players.length; i++){
 		if(game.players[i].color === color){
 			if(game.turn > i){
@@ -1163,6 +1169,10 @@ function removeDefeatedPlayer(color){
 				}
 			}
 			game.players.splice(i, 1);
+			if (color === oldTurnColor) {
+				game.state = "move";
+				moveInstructions();
+			}
 			break;
 		}
 	}
@@ -1292,7 +1302,7 @@ function doneWithSerpent(){
 CALCULATE/DISPLAY FUNCTIONS
 ***************************/
 function calculateMoves(region){
-	if(region.color !== "" && region.color !== "serpent" && region.color !== "white" && (region.captain || region.soldiers > 0)){
+	if(region.color !== "" && region.color !== "serpent" && region.color !== "gray" && (region.captain || region.soldiers > 0)){
 		if(region.type === "land"){
 			region.moves = 1;
 		}
@@ -1363,6 +1373,12 @@ function showCaptains(){
 };
 
 function showArmy(territory){
+		if(territory.hasOwnProperty('flag') && territory.flag !== ""){
+			var flagString = "<div class='army' id='flag-" + territory.name + "'><div class='sigil' onclick=\"clickArmy('" + territory.name + "')\"><img class='flag' src='images/flag-" + territory.flag + ".png'></div></div>";
+			$("#mapArea").append(flagString);
+		}
+	
+	
 		var armyString = "";
 	
 		armyString += "<div class='army " + territory.name + "' id='army-" + territory.name + "'><div class='armymen' onclick=\"clickArmy('" + territory.name + "')\">";
@@ -1372,31 +1388,26 @@ function showArmy(territory){
 		else if(territory.color != "" && (territory.soldiers > 0 || territory.captain) && game.state === "battle" && (territory.color !== game.players[game.turn].color || territory.battles > 0)){
 			armyString += "<span class='showMoves'>SHOTS: " + territory.shots + "</span><br>";
 		}
-		if(territory.hasOwnProperty('flag')){
-			armyString += "<img class='flag " + territory.color + "' src='images/flag-" + territory.flag + ".png'>";
-			if(territory.captain === false){
-				armyString += "<br>";
-			}
-		}
+		
 		if(territory.captain || territory.newCaptain){
-			armyString += "<img class='captain " + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
+			armyString += "<img class='captain captain-" + territory.color + "' src='images/captain-" + territory.color + ".png'><br>";
 		}
 		for(var i = 0; i < territory.soldiers; i++){
-			armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
+			armyString += "<img class='soldier soldier-" + territory.color + "' src='images/soldier-" + territory.color + ".png'>";
 		if(i === 3 || (territory.newSoldiers === 0 && i === territory.soldiers-1)){
 				armyString += "<br>";
 			}
 		}
 		if(territory.newSoldiers > 0){
 			for(var i = territory.soldiers; i < territory.soldiers + territory.newSoldiers; i++){
-				armyString += "<img class='soldier' src='images/soldier-" + territory.color + ".png'>";
+				armyString += "<img class='soldier soldier-" + territory.color + "' src='images/soldier-" + territory.color + ".png'>";
 				if(i === 3 || i === (territory.soldiers + territory.newSoldiers -1)){
 					armyString += "<br>";
 				}
 			}
 		}
 		for(var i = 0; i < territory.cannons; i++){
-			armyString += "<img class='cannon' src='images/cannon-" + territory.color + ".png'>";
+			armyString += "<img class='cannon cannon-" + territory.color + "'  src='images/cannon-" + territory.color + ".png'>";
 		}
 		armyString += "</div></div>";
 			
@@ -1410,7 +1421,7 @@ function showSerpent(region){
 
 function showArmies(){
 	for(var i = 0; i < regions.length; i++){
-		if((regions[i].color !== "" || regions[i].cannons > 0 || (regions[i].hasOwnProperty('flag') && regions[i].flag !== "")) && regions[i].color !== "serpent"){
+		if((regions[i].color !== "" || regions[i].cannons > 0 || (regions[i].hasOwnProperty('flag') && regions[i].flag != "")) && regions[i].color !== "serpent"){
 			var army = showArmy(regions[i]);
 			$("#mapArea").append(army);
 		}	
@@ -1458,7 +1469,7 @@ function gameDrawn(){
 		return true;
 	}
 	for(var i = 0; i < regions.length; i++){
-		if(regions[i].color !== "" && regions[i].color !== "white" && regions[i].color !== "serpent"){
+		if(regions[i].color !== "" && regions[i].color !== "gray" && regions[i].color !== "serpent"){
 			return false;
 		}
 	}

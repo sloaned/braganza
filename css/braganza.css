@@ -41,17 +41,17 @@ button{
 }
 
 
-.dice, .armymen{
+.dice, .armymen, .sigil{
 	position: relative;
 	text-align: center;
 }
 
 .dice{
-	z-index: 2;
+	z-index: 3; /* 2 */
 }
 
 .armymen{
-	z-index: 0;
+	z-index: 1; /* 0 */
 }
 
 .die{
@@ -74,7 +74,7 @@ button{
 	border: medium solid black;
 	border-radius: 10px;
 	background-color: white;
-	z-index: 1;
+	z-index: 3;
 	position: absolute;
 	text-align: center;
 	width: 120px;
@@ -83,38 +83,81 @@ button{
 
 .battle{
 	margin-top: 20px;
-	z-index: 1;
+	z-index: 2; /* 1 */
 	text-align: center;
 }
 
 .flag{
-	height: 24px;
+	height: 36px;
 	width: auto;
+	/*-webkit-filter: drop-shadow(1px 1px 0 black)
+                  drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) 
+          drop-shadow(-1px -1px 0 black);*/
+		  
+	z-index: 0;
 }
 
 .cannon{
 	width: 25px;
 	height: auto;
+	-webkit-filter: drop-shadow(1px 1px 0 black)
+                  drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) 
+          drop-shadow(-1px -1px 0 black);
 }
 
 .soldier{
 	height: 15px;
 	width: auto;
+	-webkit-filter: drop-shadow(1px 1px 0 black)
+                  drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) 
+          drop-shadow(-1px -1px 0 black); 
 }
 
 .captain{
 	height: 25px;
 	width: auto;
+	-webkit-filter: drop-shadow(1px 1px 0 black)
+                  drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) 
+          drop-shadow(-1px -1px 0 black); 
+} 
+
+.cannon-Black{
+	-webkit-filter: drop-shadow(1px 1px 0 white)
+                  drop-shadow(-1px -1px 0 white);
+  filter: drop-shadow(1px 1px 0 white) 
+          drop-shadow(-1px -1px 0 white);
+}
+
+.soldier-Black{
+	-webkit-filter: drop-shadow(1px 1px 0 white)
+                  drop-shadow(-1px -1px 0 white);
+  filter: drop-shadow(1px 1px 0 white) 
+          drop-shadow(-1px -1px 0 white);
+}
+
+.captain-Black{
+	-webkit-filter: drop-shadow(1px 1px 0 white)
+                  drop-shadow(-1px -1px 0 white);
+  filter: drop-shadow(1px 1px 0 white) 
+          drop-shadow(-1px -1px 0 white);
 }
 
 .serpent{
 	width: 110px;
 	height: auto;
 	padding-right: 50px;
+	-webkit-filter: drop-shadow(1px 1px 0 black)
+                  drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) 
+          drop-shadow(-1px -1px 0 black);
 }
 
 
-.army, .battle{
+.army, .battle, .flag{
 	position: absolute;
 }
 #mapArea{
@@ -175,6 +218,14 @@ button{
 	color: purple;
 }
 
+.Black{
+	color: black;
+}
+
+.White{
+	color: white;
+}
+
 #captainImages{
 	display: inline-block;
 	text-align: center;
@@ -220,6 +271,10 @@ button{
 
 .tint-Purple{
 	background: rgba(125, 21, 253, 0.55);
+}
+
+.tint-Black{
+	background: rgba(0, 0, 0, 0.65);
 }
 
 .rogue{
@@ -272,6 +327,71 @@ button{
 
 .baron{
 	background: url("../images/captain-thomas-niles-the-baron-easternpoint.png") no-repeat;
+}
+
+#flag-hammondcastle{
+	left: 20.6%;
+	top: 74.4%;
+}
+
+#flag-stagefortpark{
+	left: 26.7%;
+	top: 64.5%;
+}
+
+#flag-wingaersheek{
+	left: 29.2%;
+	top: 27.6%;
+}
+
+#flag-annisquam{
+	left: 48.6%;
+	top: 22.4%;
+}
+
+#flag-halibutpoint{
+	left: 72.8%;
+	top: 8.7%;
+}
+
+#flag-dogtown{
+	left: 60.4%;
+	top: 27.9%;
+}
+
+#flag-bearskinneck{
+	left: 72.9%;
+	top: 36.3%;
+}
+
+#flag-thefort{
+	left: 38.1%;
+	top: 60.4%;
+}
+
+#flag-cityhall{
+	left: 42%;
+	top: 54.3%;
+}
+
+#flag-portageehill{
+	left: 49%;
+	top: 55.4%;
+}
+
+#flag-statefishpier{
+	left: 55.1%;
+	top: 62.7%;
+}
+
+#flag-easternpoint{
+	left: 40.4%;
+	top: 87.5%;
+}
+
+#flag-thatcherisland{
+	left: 90.8%;
+	top: 60%;
 }
 
 #army-conomopoint{
